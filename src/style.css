@@ -14,3 +14,21 @@ body {
 #app {
   min-height: 100vh;
 }
+
+.bg-primary {
+  background-color: #166534;
+}
+
+.hover\:bg-secondary:hover {
+  background-color: #14532d;
+}
+
+input,
+select {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+input::placeholder {
+  color: #6b7280;
+}

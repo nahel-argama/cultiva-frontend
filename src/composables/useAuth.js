@@ -1,5 +1,5 @@
 import { computed, reactive } from 'vue';
-import { login as loginRequest } from '@/services/api';
+import { login as loginRequest, signup as signupRequest } from '@/services/api';
 
 const state = reactive({
   user: JSON.parse(localStorage.getItem('cultiva.user') ?? 'null'),
@@ -39,6 +39,12 @@ export function useAuth() {
     return response.data;
   }
 
+  async function signup(data) {
+    const response = await signupRequest(data);
+    setSession(response.data);
+    return response.data;
+  }
+
   function logout() {
     setSession(null);
   }
@@ -47,6 +53,7 @@ export function useAuth() {
     user: computed(() => state.user),
     isLoggedIn: computed(() => Boolean(state.accessToken)),
     login,
+    signup,
     logout,
   };
 }
