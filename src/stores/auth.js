@@ -51,6 +51,20 @@ export function useAuthStore() {
               },
             }
           : {}),
+        ...(profileType === 'delivery'
+          ? {
+              delivery: {
+                cnh_number: String(data.delivery?.cnh_number ?? data.cnh_number ?? '').replace(/\D/g, ''),
+                cnh_category: data.delivery?.cnh_category ?? data.cnh_category ?? 'B',
+                vehicle: {
+                  plate: String(data.delivery?.vehicle?.plate ?? data.vehicle_plate ?? '')
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, ''),
+                  cargo_type: data.delivery?.vehicle?.cargo_type ?? data.cargo_type ?? 'dry',
+                },
+              },
+            }
+          : {}),
       };
 
       return auth.signup(normalized);

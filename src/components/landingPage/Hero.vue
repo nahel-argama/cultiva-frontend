@@ -29,7 +29,7 @@
             o pequeno produtor ao varejo local através do nosso website.
           </p>
 
-          <div class="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+          <div class="flex flex-col justify-center gap-4 sm:flex-row sm:flex-wrap lg:justify-start">
             <router-link
               to="/register?type=PRODUCER"
               class="rounded-full bg-[#2CA961] px-10 py-4 text-lg font-bold text-white shadow-lg shadow-green-200 transition-all hover:-translate-y-1 hover:bg-[#23874d]"
@@ -41,6 +41,12 @@
               class="rounded-full border-2 border-[#2CA961] bg-white px-10 py-4 text-lg font-bold text-[#2CA961] shadow-lg shadow-slate-100 transition-all hover:-translate-y-1 hover:bg-green-50"
             >
               Sou Varejista
+            </router-link>
+            <router-link
+              to="/register?type=DELIVERY"
+              class="rounded-full border-2 border-[#2CA961] bg-white px-10 py-4 text-lg font-bold text-[#2CA961] shadow-lg shadow-slate-100 transition-all hover:-translate-y-1 hover:bg-green-50"
+            >
+              Sou Entregador
             </router-link>
           </div>
         </div>

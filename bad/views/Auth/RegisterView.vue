@@ -57,7 +57,7 @@
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.email }"
               required
-              @input="validateEmail()"
+              @input="errors.email && validateEmail()"
             />
             <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
           </div>
@@ -68,9 +68,8 @@
               v-model="form.type"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
             >
-              <option value="producer">Produtor</option>
-              <option value="retailer">Varejista</option>
-              <option value="delivery">Entregador</option>
+              <option value="PRODUCER">Produtor</option>
+              <option value="RETAILER">Varejista</option>
             </select>
           </div>
 
@@ -99,136 +98,40 @@
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.password }"
               required
-              @input="validatePassword()"
+              @input="errors.password && validatePassword()"
             />
             <p v-if="errors.password" class="mt-1 text-sm text-red-600">{{ errors.password }}</p>
           </div>
-
         </div>
 
         <!-- Step 2: documentos -->
         <div v-if="currentStep === 2">
           <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">CNPJ</label>
+            <label class="mb-2 block text-sm font-bold text-gray-700">Tipo de Documento</label>
+            <select
+              v-model="form.tipo_documento"
+              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              required
+            >
+              <option value="CPF">CPF</option>
+              <option value="CNPJ">CNPJ</option>
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label class="mb-2 block text-sm font-bold text-gray-700">Documento</label>
             <input
               :value="form.documento"
               type="text"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.documento }"
-              placeholder="00.000.000/0000-00"
-              maxlength="18"
+              :placeholder="form.tipo_documento === 'CPF' ? '000.000.000-00' : '00.000.000/0000-00'"
+              :maxlength="form.tipo_documento === 'CPF' ? 14 : 18"
               required
               @input="applyDocumentMask"
             />
             <p v-if="errors.documento" class="mt-1 text-sm text-red-600">{{ errors.documento }}</p>
           </div>
-
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Telefone</label>
-            <input
-              v-model="form.phone"
-              type="tel"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-              :class="{ 'border-red-500': errors.phone }"
-              required
-            />
-            <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
-          </div>
-
-          <div class="mb-4">
-            <label v-if="form.type !== 'delivery'" class="mb-2 block text-sm font-bold text-gray-700">
-              {{ form.type === 'producer' ? 'Segmento de atividade' : 'Tipo de negócio' }}
-            </label>
-            <select
-              v-if="form.type === 'producer'"
-              v-model="form.activity_segment"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-              required
-            >
-              <option value="vegetables">Hortaliças</option>
-              <option value="fruits">Frutas</option>
-              <option value="tubers_roots">Tubérculos e raízes</option>
-              <option value="herbs_spices">Ervas e especiarias</option>
-              <option value="grains">Grãos</option>
-              <option value="specialty">Especialidades</option>
-            </select>
-            <select
-              v-else-if="form.type === 'retailer'"
-              v-model="form.business_type"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-              required
-            >
-              <option value="supermarket">Supermercado</option>
-              <option value="hortifruti">Hortifruti</option>
-              <option value="restaurant">Restaurante</option>
-            </select>
-          </div>
-
-          <template v-if="form.type === 'delivery'">
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Número da CNH</label>
-              <input
-                v-model="form.cnh_number"
-                type="text"
-                inputmode="numeric"
-                maxlength="11"
-                placeholder="11 dígitos"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-                :class="{ 'border-red-500': errors.cnh_number }"
-                required
-                @input="form.cnh_number = form.cnh_number.replace(/\D/g, '').slice(0, 11)"
-              />
-              <p v-if="errors.cnh_number" class="mt-1 text-sm text-red-600">{{ errors.cnh_number }}</p>
-            </div>
-
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Categoria da CNH</label>
-              <select
-                v-model="form.cnh_category"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-                required
-              >
-                <option value="A">Categoria A</option>
-                <option value="B">Categoria B</option>
-                <option value="C">Categoria C</option>
-                <option value="D">Categoria D</option>
-                <option value="E">Categoria E</option>
-                <option value="AB">Categoria AB</option>
-                <option value="AC">Categoria AC</option>
-                <option value="AD">Categoria AD</option>
-                <option value="AE">Categoria AE</option>
-              </select>
-            </div>
-
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Placa do veículo</label>
-              <input
-                v-model="form.vehicle_plate"
-                type="text"
-                maxlength="8"
-                placeholder="ABC1D23"
-                class="w-full rounded-lg border px-3 py-2 uppercase focus:ring-2 focus:ring-green-800 focus:outline-none"
-                :class="{ 'border-red-500': errors.vehicle_plate }"
-                required
-                @input="form.vehicle_plate = form.vehicle_plate.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8)"
-              />
-              <p v-if="errors.vehicle_plate" class="mt-1 text-sm text-red-600">{{ errors.vehicle_plate }}</p>
-            </div>
-
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Tipo de carga</label>
-              <select
-                v-model="form.cargo_type"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-                required
-              >
-                <option value="dry">Carga Seca</option>
-                <option value="climate_controlled">Climatizada</option>
-                <option value="refrigerated">Refrigerada</option>
-              </select>
-            </div>
-          </template>
-
         </div>
 
         <!-- Step 3: endereços -->
@@ -407,24 +310,18 @@ const lastSearchedCep = ref('');
 
 const route = useRoute();
 
-const initialType = ['producer', 'retailer', 'delivery', 'PRODUCER', 'RETAILER', 'DELIVERY'].includes(route.query.type)
-  ? String(route.query.type).toLowerCase()
-  : 'producer';
+const initialType = ['PRODUCER', 'RETAILER'].includes(route.query.type)
+  ? route.query.type
+  : 'PRODUCER';
 
 const form = reactive({
   name: '',
   email: '',
   type: initialType,
   password: '',
+  tipo_documento: 'CPF',
   documento: '',
   nome_fantasia: '',
-  phone: '',
-  activity_segment: 'vegetables',
-  business_type: 'supermarket',
-  cnh_number: '',
-  cnh_category: 'B',
-  vehicle_plate: '',
-  cargo_type: 'dry',
   rua: '',
   numero: '',
   bairro: '',
@@ -438,10 +335,7 @@ const errors = reactive({
   email: '',
   nome_fantasia: '',
   password: '',
-  phone: '',
   documento: '',
-  cnh_number: '',
-  vehicle_plate: '',
   cep: '',
   rua: '',
   numero: '',
@@ -470,6 +364,14 @@ onMounted(async () => {
 });
 
 watch(
+  () => form.tipo_documento,
+  () => {
+    errors.documento = '';
+    form.documento = '';
+  },
+);
+
+watch(
   () => form.cep,
   (newVal) => {
     errors.cep = '';
@@ -495,23 +397,6 @@ const nextStep = async () => {
       toast.warning('O campo Nome Completo é obrigatório.', 'Nome Completo Inválido');
       return;
     }
-    if (!validateEmail()) {
-      toast.warning(errors.email, 'Email Inválido');
-      return;
-    }
-
-    // Verificar se o email já existe no backend
-    try {
-      const emailCheck = await authStore.checkEmail(form.email);
-      if (emailCheck.exists) {
-        errors.email = 'Este e-mail já está cadastrado.';
-        toast.warning(errors.email, 'Email já cadastrado');
-        return;
-      }
-    } catch {
-      toast.error('Erro ao verificar disponibilidade do e-mail.', 'Falha na Verificação');
-      return;
-    }
 
     if (!validateNomeFantasia()) {
       toast.warning(
@@ -527,15 +412,6 @@ const nextStep = async () => {
   } else if (currentStep.value === 2) {
     if (!validateDocumento()) {
       toast.warning(errors.documento, 'Documento Inválido');
-      return;
-    }
-
-    if (!validatePhone()) {
-      toast.warning(errors.phone, 'Telefone Inválido');
-      return;
-    }
-
-    if (form.type === 'delivery' && !validateDeliveryFields()) {
       return;
     }
 
@@ -563,6 +439,15 @@ const prevStep = () => {
   }
 };
 
+const maskCPF = (value) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1');
+};
+
 const maskCNPJ = (value) => {
   return value
     .replace(/\D/g, '')
@@ -581,7 +466,12 @@ const maskCEP = (value) => {
 };
 
 const applyDocumentMask = (event) => {
-  form.documento = maskCNPJ(event.target.value);
+  const value = event.target.value;
+  if (form.tipo_documento === 'CPF') {
+    form.documento = maskCPF(value);
+  } else {
+    form.documento = maskCNPJ(value);
+  }
   if (errors.documento) {
     validateDocumento();
   }
@@ -638,9 +528,16 @@ const validateDocumento = () => {
     errors.documento = 'O documento é obrigatório.';
     return false;
   }
-  if (doc.length !== 14) {
-    errors.documento = 'O CNPJ da empresa deve ter 14 dígitos.';
-    return false;
+  if (form.tipo_documento === 'CPF') {
+    if (doc.length !== 11) {
+      errors.documento = 'CPF inválido.';
+      return false;
+    }
+  } else if (form.tipo_documento === 'CNPJ') {
+    if (doc.length !== 14) {
+      errors.documento = 'CNPJ inválido.';
+      return false;
+    }
   }
   errors.documento = '';
   return true;
@@ -656,32 +553,6 @@ const validatePassword = () => {
     return false;
   }
   errors.password = '';
-  return true;
-};
-
-const validatePhone = () => {
-  if (form.phone.replace(/\D/g, '').length !== 13) {
-    errors.phone = 'Informe um telefone com DDD e 13 dígitos.';
-    return false;
-  }
-  errors.phone = '';
-  return true;
-};
-
-const validateDeliveryFields = () => {
-  if (!/^\d{11}$/.test(form.cnh_number)) {
-    errors.cnh_number = 'A CNH deve conter exatamente 11 dígitos.';
-    toast.warning(errors.cnh_number, 'CNH Inválida');
-    return false;
-  }
-  errors.cnh_number = '';
-
-  if (!/^[A-Z0-9]{7,8}$/.test(form.vehicle_plate)) {
-    errors.vehicle_plate = 'Informe uma placa com 7 ou 8 letras e números.';
-    toast.warning(errors.vehicle_plate, 'Placa Inválida');
-    return false;
-  }
-  errors.vehicle_plate = '';
   return true;
 };
 
@@ -810,51 +681,24 @@ const handleCadastro = async () => {
 
   try {
     const signupPayload = {
-      profile_type: form.type.toLowerCase(),
-      user: {
-        name: form.name.trim(),
-        email: form.email.trim(),
-        password: form.password,
-        password_confirmation: form.password,
-      },
-      company: {
-        trade_name: form.nome_fantasia.trim(),
-        legal_name: form.nome_fantasia.trim(),
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      user_type: form.type,
+      profile: {
+        document_type: form.tipo_documento,
         document_number: form.documento.replace(/\D/g, ''),
-        phone: form.phone.replace(/\D/g, ''),
-        address: {
-          zip: form.cep.replace(/\D/g, ''),
-          number: form.numero.trim(),
-          complement: '',
-          reference_point: `${form.rua.trim()}, ${form.bairro.trim()}, ${form.cidade.trim()}, ${form.estado}`.trim(),
-        },
+        trade_name: form.nome_fantasia,
       },
-      ...(form.type === 'producer'
-        ? {
-            producer: {
-              activity_segment: form.activity_segment,
-            },
-          }
-        : {}),
-      ...(form.type === 'retailer'
-        ? {
-            retailer: {
-              business_type: form.business_type,
-            },
-          }
-        : {}),
-      ...(form.type === 'delivery'
-        ? {
-            delivery: {
-              cnh_number: form.cnh_number,
-              cnh_category: form.cnh_category,
-              vehicle: {
-                plate: form.vehicle_plate,
-                cargo_type: form.cargo_type,
-              },
-            },
-          }
-        : {}),
+      address: {
+        street: form.rua,
+        number: form.numero,
+        complement: '',
+        neighborhood: form.bairro,
+        city: form.cidade,
+        state: form.estado,
+        postal_code: form.cep.replace(/\D/g, ''),
+      },
     };
     await authStore.signup(signupPayload);
 
