@@ -1,7 +1,8 @@
 <script setup>
-import LandingPage from './views/LandingPage.vue'
+import ToastHost from './components/ui/ToastHost.vue'
 </script>
 
 <template>
-  <LandingPage />
+  <RouterView />
+  <ToastHost />
 </template>
