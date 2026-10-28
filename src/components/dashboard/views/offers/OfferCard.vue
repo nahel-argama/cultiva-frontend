@@ -95,6 +95,7 @@
             v-model.number="selectedQuantity"
             type="number"
             min="1"
+            step="1"
             :max="availableQuantity > 0 ? availableQuantity : 1"
             class="w-20 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-sm font-bold text-slate-900 transition outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="isAdding || availableQuantity <= 0"
@@ -169,11 +170,7 @@ const imageUrl = computed(() => {
   return props.item.images?.[0]?.image || null;
 });
 
-const availableQuantity = computed(() => {
-  const total = Number(props.item.total_quantity || 0);
-  const reserved = Number(props.item.reserved_quantity || 0);
-  return Math.max(0, total - reserved);
-});
+const availableQuantity = computed(() => Number(props.item.available_quantity));
 
 const isDescriptionOpen = ref(false);
 
@@ -192,22 +189,21 @@ const canAddToCart = computed(() => {
   return (
     !props.isAdding &&
     availableQuantity.value > 0 &&
+    Number.isInteger(selectedQuantity.value) &&
     selectedQuantity.value > 0 &&
     selectedQuantity.value <= availableQuantity.value
   );
 });
 
 function normalizeQuantity() {
-  const nextValue = Number(selectedQuantity.value || 0);
+  const nextValue = Math.trunc(Number(selectedQuantity.value || 0));
 
   if (!Number.isFinite(nextValue) || nextValue < 1) {
     selectedQuantity.value = 1;
     return;
   }
 
-  if (nextValue > availableQuantity.value && availableQuantity.value > 0) {
-    selectedQuantity.value = availableQuantity.value;
-  }
+  selectedQuantity.value = Math.min(nextValue, Math.max(1, availableQuantity.value));
 }
 
 function incrementQuantity() {

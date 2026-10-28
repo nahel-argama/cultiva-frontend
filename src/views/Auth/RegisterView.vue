@@ -40,6 +40,7 @@
             <label class="mb-2 block text-sm font-bold text-gray-700">Nome Completo</label>
             <input
               v-model="form.name"
+              maxlength="100"
               type="text"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.name }"
@@ -53,6 +54,7 @@
             <label class="mb-2 block text-sm font-bold text-gray-700">Email</label>
             <input
               v-model="form.email"
+              maxlength="100"
               type="email"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.email }"
@@ -80,6 +82,7 @@
             >
             <input
               v-model="form.nome_fantasia"
+              maxlength="100"
               type="text"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.nome_fantasia }"
@@ -126,11 +129,17 @@
           <div class="mb-4">
             <label class="mb-2 block text-sm font-bold text-gray-700">Telefone</label>
             <input
-              v-model="form.phone"
+              :value="form.phone"
               type="tel"
+              inputmode="numeric"
+              autocomplete="tel-national"
+              placeholder="(00) 00000-0000"
+              maxlength="15"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.phone }"
               required
+              @input="applyPhoneMask"
+              @blur="validatePhone()"
             />
             <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
           </div>
@@ -227,6 +236,24 @@
                 <option value="refrigerated">Refrigerada</option>
               </select>
             </div>
+
+            <div class="mb-4">
+              <label for="vehicle_capacity" class="mb-2 block text-sm font-bold text-gray-700">
+                Capacidade do veículo (kg)
+              </label>
+              <input
+                id="vehicle_capacity"
+                v-model.number="form.vehicle_capacity"
+                type="number"
+                min="0.01"
+                step="0.01"
+                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+                :class="{ 'border-red-500': errors.vehicle_capacity }"
+                required
+                @input="errors.vehicle_capacity && validateDeliveryFields()"
+              />
+              <p v-if="errors.vehicle_capacity" class="mt-1 text-sm text-red-600">{{ errors.vehicle_capacity }}</p>
+            </div>
           </template>
 
         </div>
@@ -291,6 +318,7 @@
             <label class="mb-2 block text-sm font-bold text-gray-700">Número</label>
             <input
               v-model="form.numero"
+              maxlength="20"
               type="text"
               class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
               :class="{ 'border-red-500': errors.numero }"
@@ -424,6 +452,7 @@ const form = reactive({
   cnh_number: '',
   cnh_category: 'B',
   vehicle_plate: '',
+  vehicle_capacity: '',
   cargo_type: 'dry',
   rua: '',
   numero: '',
@@ -442,6 +471,7 @@ const errors = reactive({
   documento: '',
   cnh_number: '',
   vehicle_plate: '',
+  vehicle_capacity: '',
   cep: '',
   rua: '',
   numero: '',
@@ -500,19 +530,6 @@ const nextStep = async () => {
       return;
     }
 
-    // Verificar se o email já existe no backend
-    try {
-      const emailCheck = await authStore.checkEmail(form.email);
-      if (emailCheck.exists) {
-        errors.email = 'Este e-mail já está cadastrado.';
-        toast.warning(errors.email, 'Email já cadastrado');
-        return;
-      }
-    } catch {
-      toast.error('Erro ao verificar disponibilidade do e-mail.', 'Falha na Verificação');
-      return;
-    }
-
     if (!validateNomeFantasia()) {
       toast.warning(
         'O campo Nome fantasia / Razão social é obrigatório.',
@@ -539,18 +556,6 @@ const nextStep = async () => {
       return;
     }
 
-    // Verificar se o documento já existe no backend
-    try {
-      const docCheck = await authStore.checkDocument(form.documento);
-      if (docCheck.exists) {
-        errors.documento = 'Este documento já está cadastrado.';
-        toast.warning(errors.documento, 'Documento já cadastrado');
-        return;
-      }
-    } catch {
-      toast.error('Erro ao verificar disponibilidade do documento.', 'Falha na Verificação');
-      return;
-    }
   }
   if (currentStep.value < 3) {
     currentStep.value++;
@@ -591,6 +596,18 @@ const applyCepMask = (event) => {
   form.cep = maskCEP(event.target.value);
 };
 
+const applyPhoneMask = (event) => {
+  form.phone = event.target.value
+    .replace(/\D/g, '')
+    .slice(0, 11)
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2');
+  event.target.value = form.phone;
+  if (errors.phone) {
+    validatePhone();
+  }
+};
+
 const validateCep = (showError = true) => {
   const cep = form.cep.replace(/\D/g, '');
   if (!cep) {
@@ -609,6 +626,7 @@ const validateCep = (showError = true) => {
 };
 
 const handleCepBlur = async () => {
+  if (isSearchingCep.value) return;
   const cep = form.cep.replace(/\D/g, '');
   if (cep === lastSearchedCep.value) return;
 
@@ -660,8 +678,8 @@ const validatePassword = () => {
 };
 
 const validatePhone = () => {
-  if (form.phone.replace(/\D/g, '').length !== 13) {
-    errors.phone = 'Informe um telefone com DDD e 13 dígitos.';
+  if (form.phone.replace(/\D/g, '').length !== 11) {
+    errors.phone = 'Informe um telefone com DDD e 11 dígitos. Ex.: (00) 00000-0000.';
     return false;
   }
   errors.phone = '';
@@ -682,6 +700,12 @@ const validateDeliveryFields = () => {
     return false;
   }
   errors.vehicle_plate = '';
+  if (!Number.isFinite(Number(form.vehicle_capacity)) || Number(form.vehicle_capacity) <= 0) {
+    errors.vehicle_capacity = 'Informe uma capacidade maior que zero.';
+    toast.warning(errors.vehicle_capacity, 'Capacidade Inválida');
+    return false;
+  }
+  errors.vehicle_capacity = '';
   return true;
 };
 
@@ -690,8 +714,8 @@ const validateName = () => {
     errors.name = 'O nome completo é obrigatório.';
     return false;
   }
-  if (/\d/.test(form.name)) {
-    errors.name = 'O nome completo não pode conter números.';
+  if (form.name.trim().length > 100) {
+    errors.name = 'O nome completo deve ter no máximo 100 caracteres.';
     return false;
   }
   errors.name = '';
@@ -704,7 +728,7 @@ const validateEmail = () => {
     return false;
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(form.email)) {
+  if (form.email.trim().length > 100 || !emailRegex.test(form.email)) {
     errors.email = 'Insira um e-mail válido.';
     return false;
   }
@@ -717,8 +741,8 @@ const validateNomeFantasia = () => {
     errors.nome_fantasia = 'O nome fantasia / razão social é obrigatório.';
     return false;
   }
-  if (/\d/.test(form.nome_fantasia)) {
-    errors.nome_fantasia = 'O nome fantasia não pode conter números.';
+  if (form.nome_fantasia.trim().length > 100) {
+    errors.nome_fantasia = 'O nome fantasia deve ter no máximo 100 caracteres.';
     return false;
   }
   errors.nome_fantasia = '';
@@ -739,8 +763,8 @@ const validateNumero = () => {
     errors.numero = 'O número é obrigatório.';
     return false;
   }
-  if (!/^\d+$/.test(form.numero)) {
-    errors.numero = 'O número deve conter apenas algarismos (números).';
+  if (form.numero.trim().length > 20) {
+    errors.numero = 'O número deve ter no máximo 20 caracteres.';
     return false;
   }
   errors.numero = '';
@@ -826,7 +850,7 @@ const handleCadastro = async () => {
           zip: form.cep.replace(/\D/g, ''),
           number: form.numero.trim(),
           complement: '',
-          reference_point: `${form.rua.trim()}, ${form.bairro.trim()}, ${form.cidade.trim()}, ${form.estado}`.trim(),
+          reference_point: null,
         },
       },
       ...(form.type === 'producer'
@@ -851,6 +875,7 @@ const handleCadastro = async () => {
               vehicle: {
                 plate: form.vehicle_plate,
                 cargo_type: form.cargo_type,
+                capacity: form.vehicle_capacity,
               },
             },
           }
@@ -867,18 +892,7 @@ const handleCadastro = async () => {
     );
     router.push('/dashboard');
   } catch (error) {
-    const backendMessage =
-      error?.response?.data?.detail ||
-      error?.response?.data?.message ||
-      error?.response?.data?.non_field_errors?.[0] ||
-      error?.response?.data ||
-      error?.message ||
-      'Erro desconhecido';
-
-    const errorDetails =
-      typeof backendMessage === 'object' ? JSON.stringify(backendMessage) : String(backendMessage);
-
-    toast.error(`Falha ao concluir seu cadastro. Detalhes: ${errorDetails}`, 'Falha no Cadastro');
+    toast.error(error?.message || 'Não foi possível concluir seu cadastro.', 'Falha no Cadastro');
   } finally {
     isLoading.value = false;
   }

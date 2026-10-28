@@ -154,7 +154,7 @@ async function handleSubmit() {
     closeModal();
   } catch (err) {
     submitError.value =
-      err?.response?.data?.detail ?? 'Não foi possível adicionar o produto. Tente novamente.';
+      err?.message || 'Não foi possível adicionar o produto. Tente novamente.';
   } finally {
     isSubmitting.value = false;
   }

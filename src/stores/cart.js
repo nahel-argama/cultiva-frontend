@@ -2,7 +2,7 @@ import { reactive } from 'vue';
 import { apiRequest } from '@/services/api';
 import { useAuth } from '@/composables/useAuth';
 
-const state = reactive({ carts: {} });
+const state = reactive({ carts: {}, purchaseRevision: 0 });
 
 function userKey() {
   return useAuth().profileData.value?.user?.email ?? 'anonymous';
@@ -28,6 +28,10 @@ function saveCart() {
 
 export function useCartStore() {
   const store = {
+    get purchaseRevision() {
+      return state.purchaseRevision;
+    },
+
     get pendingOrdersList() {
       const items = loadCart();
       return items.length
@@ -86,6 +90,7 @@ export function useCartStore() {
         method: 'POST',
         body: JSON.stringify({ quantity: Number(item.quantity) }),
       });
+      state.purchaseRevision++;
       state.carts[userKey()] = loadCart().filter((entry) => Number(entry.offer_id) !== Number(item.offer_id));
       saveCart();
       completedCount++;

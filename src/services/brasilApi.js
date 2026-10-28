@@ -1,9 +1,9 @@
+import { apiRequest } from '@/services/api';
+
 const BRASIL_API_URL = 'https://brasilapi.com.br/api';
 
 export async function fetchAddressByCep(cep) {
-  const response = await fetch(`${BRASIL_API_URL}/cep/v2/${cep}`);
-  if (!response.ok) throw new Error('CEP não encontrado.');
-  return response.json();
+  return apiRequest(`/consult/cep/${cep}`);
 }
 
 export async function fetchStates() {

@@ -25,7 +25,9 @@
           {{ item.contractTitle }}
         </h3>
 
-        <p class="mt-1 truncate text-sm text-slate-500">{{ item.partyName }} • {{ item.date }}</p>
+        <p class="mt-1 truncate text-sm text-slate-500">
+          <template v-if="item.partyName">{{ item.partyName }} • </template>{{ item.date }}
+        </p>
       </div>
 
       <div class="shrink-0 rounded-2xl border border-slate-200 bg-white p-2 text-slate-500">
@@ -40,43 +42,51 @@
       <div v-if="isOpen" class="border-t border-slate-100 px-5 py-5">
         <div class="space-y-3">
           <button
-            v-if="item.rawOrder?.status !== 'CANCELED'"
             type="button"
             class="invoice-btn ml-4"
             @click.stop="$emit('download-invoice', item)"
           >
             <ArrowDownTrayIcon class="h-4 w-4" />
-            Baixar comprovante
+            Imprimir comprovante
           </button>
 
           <div class="min-w-0 space-y-3">
-            <div class="rounded-[22px] bg-slate-50 px-4 py-3">
+            <div v-if="item.partyName || item.partyDocument || item.partyLocation" class="rounded-[22px] bg-slate-50 px-4 py-3">
               <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-                Fornecedor
+                {{ item.partyLabel }}
               </p>
-              <p class="mt-1 text-base font-bold text-slate-900">
+              <p v-if="item.partyName" class="mt-1 text-base font-bold text-slate-900">
                 {{ item.partyName }}
               </p>
-              <p class="mt-1 text-sm text-slate-500">
-                {{ item.partyDocument }} • {{ item.partyLocation }}
+              <p v-if="item.partyLegalName && item.partyLegalName !== item.partyName" class="mt-1 text-sm text-slate-500">
+                {{ item.partyLegalName }}
+              </p>
+              <p v-if="item.partyDocument || item.partyLocation" class="mt-1 text-sm text-slate-500">
+                {{ [item.partyDocument, item.partyLocation].filter(Boolean).join(' • ') }}
+              </p>
+              <p class="mt-2 text-xs text-slate-400">
+                Dados atuais do cadastro.
               </p>
             </div>
 
-            <div class="rounded-[22px] bg-slate-50 px-4 py-3">
+            <div v-if="item.partyContact || item.partyEmail || item.partyPhone" class="rounded-[22px] bg-slate-50 px-4 py-3">
               <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
                 Contato
               </p>
-              <p class="mt-1 text-base font-bold text-slate-900">
+              <p v-if="item.partyContact" class="mt-1 text-base font-bold text-slate-900">
                 {{ item.partyContact }}
               </p>
-              <p class="mt-1 text-sm text-slate-500">
-                {{ item.partyEmail }}
+              <p v-if="item.partyEmail" class="mt-1 text-sm text-slate-500">
+                <a :href="`mailto:${item.partyEmail}`">{{ item.partyEmail }}</a>
+              </p>
+              <p v-if="item.partyPhone" class="mt-1 text-sm text-slate-500">
+                <a :href="`tel:${item.partyPhone}`">{{ item.partyPhone }}</a>
               </p>
             </div>
 
             <div class="rounded-[22px] bg-slate-50 px-4 py-3">
               <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-                Data do contrato
+                Data da {{ itemKindLabel.toLowerCase() }}
               </p>
               <p class="mt-1 text-base font-bold text-slate-900">
                 {{ item.date }}
@@ -88,7 +98,7 @@
         <div class="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
           <div class="rounded-[22px] bg-slate-50 px-4 py-4">
             <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-              Itens {{ itemKindLabel.toLowerCase() }}
+              Produto
             </p>
 
             <div class="mt-3 space-y-3">
@@ -107,6 +117,7 @@
                 </div>
 
                 <span
+                  v-if="contractItem.category"
                   class="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
                 >
                   {{ contractItem.category }}
@@ -118,22 +129,10 @@
           <div class="space-y-3">
             <div class="rounded-[22px] bg-slate-50 px-4 py-3">
               <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-                Forma de pagamento
+                Valor da {{ itemKindLabel.toLowerCase() }}
               </p>
               <p class="mt-1 text-base font-bold text-slate-900">
-                {{ item.payment.method }}
-              </p>
-              <p class="mt-1 text-sm text-slate-500">
-                {{ item.payment.details }}
-              </p>
-            </div>
-
-            <div class="rounded-[22px] bg-slate-50 px-4 py-3">
-              <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-                Valor do contrato
-              </p>
-              <p class="mt-1 text-base font-bold text-slate-900">
-                {{ item.payment.total }}
+                {{ item.total }}
               </p>
             </div>
           </div>

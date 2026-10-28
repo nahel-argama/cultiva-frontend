@@ -22,7 +22,17 @@ export async function apiRequest(path, options = {}) {
 
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
-    const error = new Error(payload?.message ?? 'Não foi possível concluir a requisição.');
+    if (response.status === 401 && !normalizedPath.startsWith('/v1/auth/') && !normalizedPath.startsWith('/v1/consult/')) {
+      for (const key of ['access_token', 'refresh_token', 'user', 'auth_data']) {
+        localStorage.removeItem(`cultiva.${key}`);
+      }
+      if (typeof window !== 'undefined') {
+        const redirect = window.location.pathname + window.location.search;
+        window.location.replace(`/login?redirect=${encodeURIComponent(redirect)}`);
+      }
+    }
+    const validationMessage = Object.values(payload?.errors ?? {}).flat().join(' ');
+    const error = new Error(validationMessage || payload?.message || 'Não foi possível concluir a requisição.');
     error.status = response.status;
     error.payload = payload;
     throw error;

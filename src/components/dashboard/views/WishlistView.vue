@@ -7,12 +7,16 @@
       @open-modal="isCreateModalOpen = true"
     />
 
-    <WishlistGrid :items="wishlistItems" :loading="isLoading" @remove="removeProduct" />
+    <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
+    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
+    <WishlistGrid v-else :items="wishlistItems" @remove="removeProduct" />
 
     <AppPagination
       v-model="currentPage"
       :total-items="totalItems"
-      @change="(page) => fetchItems(searchTerm, page)"
+      :items-per-page="itemsPerPage"
+      :loading="isLoading"
+      @change="load"
     />
 
     <WishlistCreateModal v-model="isCreateModalOpen" @submit="onItemCreated" />
@@ -20,12 +24,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import WishlistCreateModal from './wishlist/WishlistCreateModal.vue';
 import WishlistGrid from './wishlist/WishlistGrid.vue';
 import WishlistToolbar from './wishlist/WishlistToolbar.vue';
 import AppPagination from '@/components/ui/AppPagination.vue';
 import { listWishlistItems } from '@/services/wishlist';
+import { usePaginatedList } from '@/composables/usePaginatedList';
 import { useToast } from '@/composables/useToast';
 import { capitalize } from '@/utils/string';
 
@@ -37,30 +42,13 @@ const toast = useToast();
 
 const searchTerm = ref('');
 const isCreateModalOpen = ref(false);
-const wishlistItems = ref([]);
-const isLoading = ref(false);
 
-const currentPage = ref(1);
-const totalItems = ref(0);
+const { items: wishlistItems, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList(
+  (params) => listWishlistItems({ ...params, productName: searchTerm.value }),
+  12,
+);
 
-// ── Fetch ─────────────────────────────────────────────────────────────────────
-
-async function fetchItems(productName = '', page = 1) {
-  isLoading.value = true;
-  currentPage.value = page;
-  try {
-    const data = await listWishlistItems({ productName, page });
-    wishlistItems.value = data.results;
-    totalItems.value = data.count || 0;
-  } catch {
-    wishlistItems.value = [];
-    totalItems.value = 0;
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-onMounted(() => fetchItems());
+onMounted(() => load(1));
 
 // ── Search (debounced, delegado à API) ────────────────────────────────────────
 
@@ -69,31 +57,22 @@ let searchTimer = null;
 function onSearch(value) {
   searchTerm.value = value;
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => fetchItems(value.trim()), 400);
+  searchTimer = setTimeout(() => load(1), 400);
 }
+
+onUnmounted(() => clearTimeout(searchTimer));
 
 // ── Actions ───────────────────────────────────────────────────────────────────
 
-/** Chamado após o modal criar o item com sucesso — insere no final da lista e exibe um toast. */
-function onItemCreated(newItem) {
-  wishlistItems.value.push(newItem);
-  totalItems.value++;
+/** Recarrega a página mantendo busca, ordenação e totais do backend. */
+async function onItemCreated(newItem) {
+  await load(currentPage.value);
 
   const productName = newItem.product_name ? capitalize(newItem.product_name) : 'Produto';
   toast.success(`"${productName}" foi adicionado com sucesso!`, 'Adicionado');
 }
 
-async function removeProduct(itemId) {
-  // Remove otimisticamente do estado local
-  wishlistItems.value = wishlistItems.value.filter((item) => item.id !== itemId);
-
-  // Se a página atual ficou vazia e não for a primeira página, voltamos para a página anterior
-  let targetPage = currentPage.value;
-  if (wishlistItems.value.length === 0 && currentPage.value > 1) {
-    targetPage = currentPage.value - 1;
-  }
-
-  // Recarrega os dados do backend para sincronizar a listagem e os totais de paginação
-  await fetchItems(searchTerm.value, targetPage);
+function removeProduct() {
+  return load(currentPage.value);
 }
 </script>

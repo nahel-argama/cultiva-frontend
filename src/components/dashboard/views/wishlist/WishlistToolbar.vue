@@ -17,6 +17,7 @@
             id="wishlist-search"
             :value="search"
             type="text"
+            maxlength="255"
             class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 pr-11 text-sm text-slate-900 transition outline-none placeholder:text-slate-400 focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
             placeholder="Buscar produto..."
             @input="$emit('update-search', $event.target.value)"

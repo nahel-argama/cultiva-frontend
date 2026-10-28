@@ -4,14 +4,6 @@ export function useAuthStore() {
   const auth = useAuth();
 
   return {
-    async checkEmail() {
-      return { exists: false };
-    },
-
-    async checkDocument() {
-      return { exists: false };
-    },
-
     async signup(data) {
       const profileType = String(data.profile_type ?? data.type ?? 'producer').toLowerCase();
       const normalized = {
@@ -61,6 +53,7 @@ export function useAuthStore() {
                     .toUpperCase()
                     .replace(/[^A-Z0-9]/g, ''),
                   cargo_type: data.delivery?.vehicle?.cargo_type ?? data.cargo_type ?? 'dry',
+                  capacity: Number(data.delivery?.vehicle?.capacity ?? data.vehicle_capacity),
                 },
               },
             }

@@ -9,7 +9,7 @@
             {{ capitalize(item.name) }}
           </h3>
           <p class="mt-1 text-sm font-medium text-slate-500">
-            {{ item.total_quantity }} kg em estoque | R$ {{ item.price }}/kg
+            {{ item.available_quantity }} kg disponíveis | R$ {{ item.price }}/kg
           </p>
         </div>
 
@@ -27,8 +27,8 @@
           <button
             type="button"
             class="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:border-rose-200 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none"
-            :aria-label="`Remover ${capitalize(item.name)}`"
-            :disabled="isRemoving"
+            :aria-label="`Zerar estoque disponível de ${capitalize(item.name)}`"
+            :disabled="isRemoving || item.available_quantity <= 0"
             @click="openDeleteDialog"
           >
             <TrashIcon class="h-5 w-5" />
@@ -66,10 +66,10 @@
 
     <AppDialog
       v-model="isDialogOpen"
-      title="Remover produto?"
-      :message="`Tem certeza que deseja remover ${capitalize(item.name)} do seu estoque? Esta ação não pode ser desfeita.`"
+      title="Zerar estoque disponível?"
+      :message="`Zerar o saldo disponível de ${capitalize(item.name)}? Quantidades reservadas e histórico serão preservados. A oferta continuará no estoque com saldo disponível zero.`"
       variant="danger"
-      confirm-label="Remover"
+      confirm-label="Zerar estoque"
       :loading="isRemoving"
       @confirm="confirmDelete"
     />
@@ -95,7 +95,7 @@ import { computed, ref } from 'vue';
 import { PhotoIcon, TrashIcon, InformationCircleIcon } from '@heroicons/vue/24/outline';
 import AppSecureImage from '@/components/ui/AppSecureImage.vue';
 import AppDialog from '@/components/ui/AppDialog.vue';
-import { deleteProduct } from '@/services/product';
+import { clearAvailableStock } from '@/services/product';
 import { capitalize } from '@/utils/string';
 
 const props = defineProps({
@@ -105,7 +105,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['remove']);
+const emit = defineEmits(['updated']);
 
 const isRemoving = ref(false);
 const isDialogOpen = ref(false);
@@ -134,8 +134,8 @@ function openDeleteDialog() {
 async function confirmDelete() {
   isRemoving.value = true;
   try {
-    await deleteProduct(props.item.id);
-    emit('remove', props.item.id);
+    await clearAvailableStock(props.item.id);
+    emit('updated', props.item.id);
     isDialogOpen.value = false;
   } catch {
     // Silencia o erro, mantendo o estado do botão

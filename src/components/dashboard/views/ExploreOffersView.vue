@@ -2,42 +2,47 @@
   <section class="space-y-6 pb-6">
     <OffersHeader :search="searchTerm" @update-search="onSearch" />
 
+    <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
+    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
     <OffersGrid
+      v-else
       :items="offers"
       :cart-quantities="cartQuantitiesByProduct"
       :adding-product-id="addingProductId"
       empty-title="Nenhuma oferta encontrada"
-      empty-description="Tente outro termo de busca."
+      empty-description="Não há ofertas disponíveis no momento."
       @add-to-cart="handleAddToCart"
     />
 
     <AppPagination
       v-model="currentPage"
       :total-items="totalItems"
-      @change="(page) => fetchOffers(searchTerm, page)"
+      :items-per-page="itemsPerPage"
+      :loading="isLoading"
+      @change="load"
     />
   </section>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import OffersGrid from './offers/OffersGrid.vue';
 import OffersHeader from './offers/OffersHeader.vue';
 import AppPagination from '@/components/ui/AppPagination.vue';
 import { listProducts } from '@/services/product';
+import { usePaginatedList } from '@/composables/usePaginatedList';
 import { useCartStore } from '@/stores/cart';
 import { useToast } from '@/composables/useToast';
 import { capitalize } from '@/utils/string';
 
 const searchTerm = ref('');
-const offers = ref([]);
-const isLoading = ref(false);
+const { items: offers, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listProducts({ ...params, search: searchTerm.value }), 12);
 const addingProductId = ref(null);
 
-const currentPage = ref(1);
-const totalItems = ref(0);
 const cartStore = useCartStore();
 const toast = useToast();
+
+watch(() => cartStore.purchaseRevision, () => load());
 
 const cartQuantitiesByProduct = computed(() => {
   const quantities = {};
@@ -59,32 +64,9 @@ const cartQuantitiesByProduct = computed(() => {
   return quantities;
 });
 
-async function fetchOffers(query = '', page = 1) {
-  isLoading.value = true;
-  currentPage.value = page;
-  try {
-    const data = await listProducts({ query, page });
-    offers.value = data.results;
-    totalItems.value = data.count || 0;
-  } catch {
-    offers.value = [];
-    totalItems.value = 0;
-  } finally {
-    isLoading.value = false;
-  }
-}
-
 onMounted(async () => {
-  await Promise.allSettled([fetchOffers(), cartStore.syncPendingOrders()]);
+  await Promise.allSettled([load(1), cartStore.syncPendingOrders()]);
 });
-
-let searchTimer = null;
-
-function onSearch(value) {
-  searchTerm.value = value;
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => fetchOffers(value.trim()), 400);
-}
 
 function getProducerLabel(product) {
   if (product?.producer_name) {
@@ -132,4 +114,14 @@ async function handleAddToCart(payload) {
     addingProductId.value = null;
   }
 }
+
+let searchTimer = null;
+
+function onSearch(value) {
+  searchTerm.value = value;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => load(1), 400);
+}
+
+onUnmounted(() => clearTimeout(searchTimer));
 </script>

@@ -5,7 +5,7 @@
         v-for="item in items"
         :key="item.id"
         :item="item"
-        @remove="$emit('remove', $event)"
+        @updated="$emit('updated', $event)"
       />
     </div>
 
@@ -35,5 +35,5 @@ defineProps({
   },
 });
 
-defineEmits(['remove']);
+defineEmits(['updated']);
 </script>

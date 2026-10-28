@@ -2,17 +2,21 @@
   <section class="space-y-6 pb-6">
     <StockToolbar
       :search="searchTerm"
-      :loading="isLoading"
       @update-search="onSearch"
+      :loading="isLoading"
       @open-modal="isCreateModalOpen = true"
     />
 
-    <StockGrid :items="products" :loading="isLoading" @remove="removeProductHandler" />
+    <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
+    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
+    <StockGrid v-else :items="products" @updated="refreshStock" />
 
     <AppPagination
       v-model="currentPage"
       :total-items="totalItems"
-      @change="(page) => fetchItems(searchTerm, page)"
+      :items-per-page="itemsPerPage"
+      :loading="isLoading"
+      @change="load"
     />
 
     <StockCreateModal v-model="isCreateModalOpen" @submit="onProductCreated" />
@@ -20,66 +24,42 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import StockCreateModal from './stock/StockCreateModal.vue';
 import StockGrid from './stock/StockGrid.vue';
 import StockToolbar from './stock/StockToolbar.vue';
 import AppPagination from '@/components/ui/AppPagination.vue';
 import { listProducts } from '@/services/product';
+import { usePaginatedList } from '@/composables/usePaginatedList';
 import { useToast } from '@/composables/useToast';
 import { capitalize } from '@/utils/string';
 
 const toast = useToast();
 
-const searchTerm = ref('');
 const isCreateModalOpen = ref(false);
-const products = ref([]);
-const isLoading = ref(false);
+const searchTerm = ref('');
+const { items: products, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listProducts({ ...params, search: searchTerm.value }), 12);
 
-const currentPage = ref(1);
-const totalItems = ref(0);
+onMounted(() => load(1));
 
-async function fetchItems(query = '', page = 1) {
-  isLoading.value = true;
-  currentPage.value = page;
-  try {
-    const data = await listProducts({ query, page });
-    products.value = data.results || data;
-    totalItems.value = data.count || products.value.length;
-  } catch {
-    products.value = [];
-    totalItems.value = 0;
-  } finally {
-    isLoading.value = false;
-  }
+async function onProductCreated(newProduct) {
+  await load(currentPage.value);
+
+  const name = newProduct.name ? capitalize(newProduct.name) : 'Produto';
+  toast.success(`"${name}" foi adicionado ao estoque com sucesso!`, 'Adicionado');
 }
 
-onMounted(() => fetchItems());
+function refreshStock() {
+  return load(currentPage.value);
+}
 
 let searchTimer = null;
 
 function onSearch(value) {
   searchTerm.value = value;
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => fetchItems(value.trim()), 400);
+  searchTimer = setTimeout(() => load(1), 400);
 }
 
-function onProductCreated(newProduct) {
-  products.value.push(newProduct);
-  totalItems.value++;
-
-  const name = newProduct.name ? capitalize(newProduct.name) : 'Produto';
-  toast.success(`"${name}" foi adicionado ao estoque com sucesso!`, 'Adicionado');
-}
-
-async function removeProductHandler(itemId) {
-  products.value = products.value.filter((item) => item.id !== itemId);
-
-  let targetPage = currentPage.value;
-  if (products.value.length === 0 && currentPage.value > 1) {
-    targetPage = currentPage.value - 1;
-  }
-
-  await fetchItems(searchTerm.value, targetPage);
-}
+onUnmounted(() => clearTimeout(searchTimer));
 </script>

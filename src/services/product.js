@@ -1,6 +1,6 @@
 import { apiRequest } from '@/services/api';
 
-const PRODUCT_SOURCE_URL = (import.meta.env.VITE_EXTERNAL_PRODUCTS_HOST ?? 'http://localhost:8000').replace(/\/+$/, '');
+const PRODUCT_SOURCE_URL = (import.meta.env.VITE_EXTERNAL_PRODUCTS_HOST ?? 'http://localhost:8001').replace(/\/+$/, '');
 const DEFAULT_PER_PAGE = 12;
 
 function normalizeOffer(offer) {
@@ -16,35 +16,16 @@ function normalizeOffer(offer) {
   };
 }
 
-async function getOffersPage(page, perPage) {
-  const params = new URLSearchParams({ page: String(page), per_page: String(perPage) });
+export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PER_PAGE } = {}) {
+  const params = new URLSearchParams({ search: search.trim(), page: String(page), per_page: String(perPage) });
   const response = await apiRequest(`/offers?${params}`);
   return {
-    results: (response?.data ?? []).map(normalizeOffer),
-    count: Number(response?.meta?.total ?? response?.data?.length ?? 0),
-    hasNext: Boolean(response?.links?.next),
+    results: response.data.map(normalizeOffer),
+    count: response.meta.total,
+    page: response.meta.current_page,
+    perPage: response.meta.per_page,
+    lastPage: response.meta.last_page,
   };
-}
-
-export async function listProducts({ query = '', page = 1, perPage = DEFAULT_PER_PAGE } = {}) {
-  if (!query.trim()) return getOffersPage(page, perPage);
-
-  const allOffers = [];
-  let currentPage = 1;
-  let hasNext = true;
-  let count = 0;
-  while (hasNext) {
-    const result = await getOffersPage(currentPage, 100);
-    allOffers.push(...result.results);
-    count = result.count || allOffers.length;
-    hasNext = result.hasNext;
-    currentPage++;
-  }
-
-  const term = query.trim().toLocaleLowerCase('pt-BR');
-  const matches = allOffers.filter((offer) => String(offer.name).toLocaleLowerCase('pt-BR').includes(term));
-  const start = (page - 1) * perPage;
-  return { results: matches.slice(start, start + perPage), count: matches.length };
 }
 
 export async function createProduct(data) {
@@ -55,6 +36,8 @@ export async function createProduct(data) {
       category_id: Number(data.category_id ?? data.category),
       unit_price: String(data.unit_price ?? data.price),
       total_quantity: Number(data.total_quantity),
+      harvest_date: data.harvest_date,
+      lifespan_days: Number(data.lifespan_days),
     }),
   });
   return normalizeOffer(response?.data ?? response);
@@ -75,9 +58,8 @@ export async function updateProduct(id, data) {
   return normalizeOffer(response?.data ?? response);
 }
 
-// The current Laravel API has no DELETE offer route. Setting total quantity to
-// the already-reserved quantity removes it from available stock without losing sales history.
-export async function deleteProduct(id) {
+// Laravel preserves the offer and purchases; only unreserved stock is cleared.
+export async function clearAvailableStock(id) {
   const response = await apiRequest(`/offers/${id}`);
   const offer = response?.data ?? response;
   return updateProduct(id, { total_quantity: Number(offer.reserved_quantity ?? 0) });
@@ -110,10 +92,4 @@ export async function getSuggestedProductPrice(productId, state = 'SP') {
   });
   if (!response.ok) throw new Error('Preço sugerido não disponível.');
   return response.json();
-}
-
-export async function generateProductDescription() {
-  const error = new Error('A API Laravel atual não disponibiliza geração de descrição por IA.');
-  error.status = 503;
-  throw error;
 }

@@ -56,6 +56,8 @@ import { ref } from 'vue';
 import { PhotoIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import AppSecureImage from '@/components/ui/AppSecureImage.vue';
 import { removeProductFromWishlist } from '@/services/wishlist';
+import { capitalize } from '@/utils/string';
+import { useToast } from '@/composables/useToast';
 
 const props = defineProps({
   item: {
@@ -67,14 +69,15 @@ const props = defineProps({
 const emit = defineEmits(['remove']);
 
 const isRemoving = ref(false);
+const toast = useToast();
 
 async function handleRemove() {
   isRemoving.value = true;
   try {
     await removeProductFromWishlist(props.item.id);
     emit('remove', props.item.id);
-  } catch {
-    // Silencia o erro, mantendo o estado do botão
+  } catch (error) {
+    toast.error(error?.message || 'Não foi possível remover o produto.', 'Falha ao remover');
   } finally {
     isRemoving.value = false;
   }

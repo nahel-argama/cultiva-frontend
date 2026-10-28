@@ -1,50 +1,47 @@
 <template>
   <section class="space-y-6 pb-6">
     <HistoryToolbar
+      :search="searchTerm"
+      @update-search="onSearch"
       eyebrow="Varejista"
       title="Histórico de Compra"
       description="Confira as compras realizadas por você."
-      :search="searchTerm"
-      @update-search="onSearch"
     />
 
+    <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
+    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
     <HistoryList
-      :items="paginatedPurchases"
+      v-else
+      :items="purchases"
       empty-title="Nenhuma compra encontrada"
-      empty-description="Não há pedidos confirmados/cancelados/entregues para exibir."
+      empty-description="Não há registros para exibir."
       item-kind-label="Compra"
       @download-invoice="onDownloadInvoice"
     />
 
     <AppPagination
-      v-if="filteredPurchases.length > 0"
       v-model="currentPage"
-      :total-items="filteredPurchases.length"
+      :total-items="totalItems"
       :items-per-page="itemsPerPage"
+      :loading="isLoading"
+      @change="load"
     />
   </section>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import HistoryList from './history/HistoryList.vue';
 import HistoryToolbar from './history/HistoryToolbar.vue';
 import AppPagination from '@/components/ui/AppPagination.vue';
 import { listOrders } from '@/services/ordersService';
-import { useToast } from '@/composables/useToast';
+import { usePaginatedList } from '@/composables/usePaginatedList';
 import { formatDocument, formatPostalCode } from '@/utils/formatters';
 import { downloadInvoice } from '@/utils/invoiceGenerator';
 
 const searchTerm = ref('');
-const purchases = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = 10;
-const toast = useToast();
-
-function onSearch(value) {
-  searchTerm.value = value;
-  currentPage.value = 1;
-}
+const { items: orders, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listOrders({ ...params, search: searchTerm.value }), 10);
+const purchases = computed(() => orders.value.map(buildHistoryItem));
 
 function formatDate(value) {
   if (!value) return '-';
@@ -62,173 +59,56 @@ function formatMoney(value) {
 }
 
 function formatAddress(address) {
-  if (!address) return 'Endereço não disponível';
+  if (!address) return '';
 
-  const mainLine = [address.street, address.number].filter(Boolean).join(', ');
+  const mainLine = [address.street, address.number, address.complement].filter(Boolean).join(', ');
   const extraLine = [address.neighborhood, address.city, address.state].filter(Boolean).join(' • ');
-  const postalCode = address.postal_code ? `CEP ${formatPostalCode(address.postal_code)}` : '';
+  const postalCode = address.zip ? `CEP ${formatPostalCode(address.zip)}` : '';
 
-  return [mainLine, extraLine, postalCode].filter(Boolean).join(' • ') || 'Endereço não disponível';
+  return [mainLine, extraLine, postalCode].filter(Boolean).join(' • ');
 }
 
-const PAYMENT_METHOD_LABELS = {
-  pix: 'PIX',
-  invoice: 'Boleto Bancário',
-  credit_card: 'Cartão de Crédito',
-};
-
-function formatPaymentMethod(method) {
-  if (!method) return 'Método não informado';
-  return PAYMENT_METHOD_LABELS[method] || method;
-}
-
-function getStatusView(status) {
-  if (status === 'RECORDED') {
-    return { label: 'Registrada', tone: 'emerald' };
-  }
-
-  if (status === 'CONFIRMED') {
-    return {
-      label: 'Confirmada',
-      tone: 'emerald',
-    };
-  }
-
-  if (status === 'DELIVERED') {
-    return {
-      label: 'Entregue',
-      tone: 'blue',
-    };
-  }
-
-  if (status === 'CANCELED') {
-    return {
-      label: 'Cancelada',
-      tone: 'red',
-    };
-  }
+function buildHistoryItem(purchase) {
+  const party = purchase.counterparty ?? {};
+  const document = formatDocument('CNPJ', party.document_number);
 
   return {
-    label: status || 'Desconhecido',
-    tone: 'amber',
+    id: purchase.id,
+    rawOrder: purchase,
+    contractTitle: `Compra #${purchase.id}`,
+    partyLabel: 'Fornecedor',
+    partyName: party.trade_name || party.legal_name || '',
+    partyLegalName: party.legal_name || '',
+    partyDocument: document ? `CNPJ ${document}` : '',
+    partyLocation: formatAddress(party.address),
+    partyContact: party.name || '',
+    partyEmail: party.email || '',
+    partyPhone: party.phone || '',
+    date: formatDate(purchase.created_at),
+    status: 'Registrada',
+    statusTone: 'emerald',
+    total: formatMoney(purchase.total_price),
+    items: [{
+      name: purchase.product_name,
+      quantity: `${purchase.quantity} kg`,
+      unit: `${formatMoney(purchase.unit_price)} / kg`,
+      category: purchase.category?.name || '',
+    }],
   };
-}
-
-async function fetchAllOrders() {
-  const allOrders = [];
-  let currentPage = 1;
-  let hasNextPage = true;
-
-  while (hasNextPage) {
-    const payload = await listOrders({ page: currentPage });
-    const pageOrders = Array.isArray(payload) ? payload : (payload?.results ?? []);
-    allOrders.push(...pageOrders);
-
-    if (Array.isArray(payload)) {
-      hasNextPage = false;
-      continue;
-    }
-
-    hasNextPage = Boolean(payload?.next);
-    currentPage += 1;
-  }
-
-  return allOrders;
-}
-
-function buildHistoryItem(order) {
-  const statusView = getStatusView(order?.status);
-  const createdAt = order?.created_at;
-  const items = Array.isArray(order?.items) ? order.items : [];
-  const producerData = order?.producer_data || {};
-  const producerName =
-    producerData.trade_name || producerData.name || `Produtor #${order.producer}`;
-  const producerDocument = formatDocument(producerData.document_type, producerData.document_number);
-
-  return {
-    id: order.id,
-    rawOrder: order,
-    contractTitle: `Pedido #${order.id}`,
-    partyName: producerName,
-    partyDocument:
-      producerData.document_type && producerDocument
-        ? `${producerData.document_type} ${producerDocument}`
-        : producerDocument || 'Documento não disponível',
-    partyLocation: formatAddress(producerData.address),
-    partyContact: producerData.name || producerName,
-    partyEmail: producerData.email || 'Contato não disponível',
-    date: formatDate(createdAt),
-    status: statusView.label,
-    statusTone: statusView.tone,
-    payment: {
-      method: formatPaymentMethod(order?.payment_method),
-      details: order?.payment_method
-        ? order?.status === 'CANCELED'
-          ? `Tentativa via ${formatPaymentMethod(order.payment_method)}`
-          : `Pago via ${formatPaymentMethod(order.payment_method)}`
-        : 'Pagamento não registrado.',
-      total: formatMoney(order?.total_value),
-    },
-    items: items.map((item) => {
-      const productId = Number(item?.product);
-      const productData = item?.product_data || {};
-      return {
-        name: productData?.name || `Produto #${productId}`,
-        quantity: `${item?.quantity ?? 0} kg`,
-        unit: `R$ ${Number(item?.unit_price || 0).toFixed(2)} / kg`,
-        category: productData?.category_name || 'Sem categoria',
-      };
-    }),
-  };
-}
-
-async function loadPurchaseHistory() {
-  try {
-    const orders = await fetchAllOrders();
-    const completedOrders = orders.filter((order) => order?.status !== 'PENDING');
-
-    purchases.value = completedOrders
-      .map((order) => buildHistoryItem(order))
-      .sort((a, b) => b.id - a.id);
-  } catch (error) {
-    purchases.value = [];
-    toast.error(error?.message || 'Não foi possível carregar histórico de compras.', 'Erro');
-  }
 }
 
 function onDownloadInvoice(item) {
   downloadInvoice(item.rawOrder);
 }
 
-const filteredPurchases = computed(() => {
-  const query = searchTerm.value.trim().toLowerCase();
+onMounted(() => load(1));
+let searchTimer = null;
 
-  if (!query) {
-    return purchases.value;
-  }
+function onSearch(value) {
+  searchTerm.value = value;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => load(1), 400);
+}
 
-  return purchases.value.filter((purchase) => {
-    return [
-      purchase.contractTitle,
-      purchase.partyName,
-      purchase.partyContact,
-      purchase.status,
-      purchase.date,
-      purchase.payment.method,
-    ]
-      .join(' ')
-      .toLowerCase()
-      .includes(query);
-  });
-});
-
-const paginatedPurchases = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return filteredPurchases.value.slice(start, end);
-});
-
-onMounted(async () => {
-  await loadPurchaseHistory();
-});
+onUnmounted(() => clearTimeout(searchTimer));
 </script>

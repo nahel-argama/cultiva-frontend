@@ -112,54 +112,39 @@
                 id="total_quantity"
                 v-model.number="form.total_quantity"
                 type="number"
-                min="1"
+                min="0"
                 required
                 class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
               />
             </div>
 
             <div>
-              <div class="mb-2 flex items-center justify-between">
-                <label for="description" class="block text-sm font-bold text-slate-700"
-                  >Descrição (Opcional)</label
-                >
-                <button
-                  v-if="form.external_id"
-                  type="button"
-                  :disabled="isGeneratingDescription"
-                  class="inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r from-emerald-500 via-teal-500 to-emerald-600 px-3 py-1 text-[10px] font-black tracking-wider text-white uppercase shadow-md shadow-emerald-500/20 transition duration-300 hover:scale-[1.03] hover:from-emerald-600 hover:to-teal-600 hover:shadow-emerald-500/30 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-75"
-                  @click="handleGenerateDescription"
-                >
-                  <svg
-                    v-if="isGeneratingDescription"
-                    class="h-3 w-3 animate-spin text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      class="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      stroke-width="4"
-                    ></circle>
-                    <path
-                      class="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  <span>{{ isGeneratingDescription ? 'Gerando...' : 'Gerar com IA' }}</span>
-                </button>
-              </div>
-              <textarea
-                id="description"
-                v-model="form.description"
-                rows="3"
-                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
-              ></textarea>
+              <label for="harvest_date" class="mb-2 block text-sm font-bold text-slate-700"
+                >Data da colheita</label
+              >
+              <input
+                id="harvest_date"
+                v-model="form.harvest_date"
+                type="date"
+                :min="new Date().toISOString().slice(0, 10)"
+                required
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+              />
+            </div>
+
+            <div>
+              <label for="lifespan_days" class="mb-2 block text-sm font-bold text-slate-700"
+                >Validade após colheita (dias)</label
+              >
+              <input
+                id="lifespan_days"
+                v-model.number="form.lifespan_days"
+                type="number"
+                min="1"
+                step="1"
+                required
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+              />
             </div>
 
             <p v-if="submitError" class="mt-2 text-sm text-red-600" role="alert">
@@ -195,10 +180,8 @@ import { reactive, ref, watch } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import AppSelect from '@/components/ui/AppSelect.vue';
 import { useProductSearch } from '@/composables/useProductSearch';
-import { createProduct, generateProductDescription, getSuggestedProductPrice } from '@/services/product';
+import { createProduct, getSuggestedProductPrice } from '@/services/product';
 import { listCategories } from '@/services/category';
-import { useAuthStore } from '@/stores/auth';
-import { useToast } from '@/composables/useToast';
 
 const props = defineProps({
   modelValue: {
@@ -214,11 +197,11 @@ const INITIAL_FORM = {
   category: null,
   price: '',
   total_quantity: '',
-  description: '',
+  harvest_date: '',
+  lifespan_days: '',
 };
 const form = reactive({ ...INITIAL_FORM });
 
-const selectedProduct = ref(null);
 const submitError = ref('');
 const isSubmitting = ref(false);
 const suggestedPrice = ref(null);
@@ -226,17 +209,12 @@ const isLoadingPrice = ref(false);
 
 const categoryOptions = ref([]);
 
-const authStore = useAuthStore();
-const toast = useToast();
-const isGeneratingDescription = ref(false);
 
 function resetForm() {
   Object.assign(form, INITIAL_FORM);
-  selectedProduct.value = null;
   submitError.value = '';
   suggestedPrice.value = null;
   isLoadingPrice.value = false;
-  isGeneratingDescription.value = false;
 }
 
 const {
@@ -273,7 +251,6 @@ function closeModal() {
 }
 
 async function handleProductSelect(option) {
-  selectedProduct.value = option;
   form.external_id = option?.id || null;
   suggestedPrice.value = null;
 
@@ -293,37 +270,12 @@ async function handleProductSelect(option) {
   }
 }
 
-async function handleGenerateDescription() {
-  if (!selectedProduct.value || !selectedProduct.value.name) return;
-  isGeneratingDescription.value = true;
-  try {
-    const response = await generateProductDescription(selectedProduct.value.name);
-    if (response && response.description) {
-      form.description = response.description;
-      toast.success('Descrição gerada com sucesso!', 'IA Concluída');
-    }
-  } catch (err) {
-    const status = err?.status ?? err?.response?.status;
-    if (status === 503) {
-      toast.error(
-        'Geração por IA indisponível no momento (desativada no backend).',
-        'Recurso Indisponível',
-      );
-    } else if (status === 429) {
-      toast.error('Limite de gerações atingido. Tente novamente em instantes.', 'Limite Excedido');
-    } else {
-      toast.error(
-        'Não foi possível gerar a descrição. Verifique as credenciais ou tente novamente.',
-        'Falha na IA',
-      );
-    }
-  } finally {
-    isGeneratingDescription.value = false;
-  }
-}
-
 async function handleSubmit() {
-  if (!form.external_id || !form.category || !form.price || !form.total_quantity) return;
+  if (
+    !form.external_id || !form.category || !form.price || !form.harvest_date ||
+    !Number.isInteger(form.total_quantity) || form.total_quantity < 0 ||
+    !Number.isInteger(form.lifespan_days) || form.lifespan_days < 1
+  ) return;
 
   submitError.value = '';
   isSubmitting.value = true;
@@ -334,8 +286,8 @@ async function handleSubmit() {
       category: form.category,
       price: form.price,
       total_quantity: form.total_quantity,
-      reserved_quantity: 0,
-      description: form.description || '',
+      harvest_date: form.harvest_date,
+      lifespan_days: form.lifespan_days,
     };
 
     const item = await createProduct(data);
@@ -343,7 +295,7 @@ async function handleSubmit() {
     closeModal();
   } catch (err) {
     submitError.value =
-      err?.response?.data?.detail ?? 'Não foi possível adicionar o produto. Verifique os dados.';
+      err?.message || 'Não foi possível adicionar o produto. Verifique os dados.';
   } finally {
     isSubmitting.value = false;
   }
