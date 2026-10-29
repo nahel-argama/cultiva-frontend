@@ -13,7 +13,7 @@
       </div>
 
       <div class="mt-10 grid gap-5 min-[720px]:grid-cols-2 min-[1080px]:mt-14 min-[1080px]:gap-16">
-        <article class="rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
+        <article class="landing-card rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
           <h3 class="font-display text-[25px] leading-8 font-semibold text-[#287A4E]">Pequeno Produtor</h3>
           <div class="mt-8 divide-y divide-[#DFE3D9]">
             <div class="py-4 first:pt-0">
@@ -31,7 +31,7 @@
           </div>
         </article>
 
-        <article class="rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
+        <article class="landing-card rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
           <h3 class="font-display text-[25px] leading-8 font-semibold text-[#287A4E]">Varejista</h3>
           <div class="mt-8 divide-y divide-[#DFE3D9]">
             <div class="py-4 first:pt-0">

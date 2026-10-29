@@ -7,28 +7,28 @@
       </h2>
 
       <div class="mt-9 grid gap-4 min-[720px]:grid-cols-2 min-[1080px]:mt-10 min-[1080px]:gap-x-9 min-[1080px]:gap-y-6">
-        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+        <article class="landing-card flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
           <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">01</span>
           <div>
             <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Previsão de Demanda</h3>
             <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Antecipe tendências e descubra oportunidades futuras de venda.</p>
           </div>
         </article>
-        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+        <article class="landing-card flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
           <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">02</span>
           <div>
             <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Precificação Inteligente</h3>
             <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Sugestões baseadas em dados de mercado para negociações mais justas.</p>
           </div>
         </article>
-        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+        <article class="landing-card flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
           <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">03</span>
           <div>
             <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Busca Geográfica</h3>
             <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Encontre parceiros próximos e reduza custos operacionais.</p>
           </div>
         </article>
-        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+        <article class="landing-card flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
           <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">04</span>
           <div>
             <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Histórico Completo</h3>

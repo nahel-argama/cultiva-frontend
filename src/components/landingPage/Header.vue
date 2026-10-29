@@ -7,15 +7,15 @@
       </a>
 
       <nav class="hidden items-center gap-4 text-[12px] text-[#56665D] min-[720px]:flex min-[1080px]:gap-7 min-[1080px]:text-sm">
-        <a href="#como-funciona" class="transition hover:text-[#2CA961]">Como Funciona</a>
-        <a href="#beneficios" class="transition hover:text-[#2CA961]">Benefícios</a>
-        <a href="#tecnologia" class="transition hover:text-[#2CA961]">Tecnologia</a>
-        <a href="#impacto" class="transition hover:text-[#2CA961]">Impacto</a>
+        <a href="#como-funciona" class="landing-nav-link hover:text-[#2CA961]">Como Funciona</a>
+        <a href="#beneficios" class="landing-nav-link hover:text-[#2CA961]">Benefícios</a>
+        <a href="#tecnologia" class="landing-nav-link hover:text-[#2CA961]">Tecnologia</a>
+        <a href="#impacto" class="landing-nav-link hover:text-[#2CA961]">Impacto</a>
       </nav>
 
       <RouterLink
         :to="auth.isLoggedIn ? '/dashboard' : '/login'"
-        class="shrink-0 rounded-full bg-[#287A4E] px-4 py-3 text-xs font-semibold text-white transition hover:bg-[#226640] min-[1080px]:px-7 min-[1080px]:text-[15px]"
+        class="landing-button shrink-0 rounded-full bg-[#287A4E] px-4 py-3 text-xs font-semibold text-white hover:bg-[#226640] min-[1080px]:px-7 min-[1080px]:text-[15px]"
       >
         Acessar Dashboard
       </RouterLink>

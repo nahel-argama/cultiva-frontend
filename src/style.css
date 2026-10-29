@@ -15,6 +15,59 @@ body {
   font-family: Fraunces, Georgia, serif;
 }
 
+.landing-card {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.landing-card:hover {
+  transform: translateY(-4px);
+  border-color: #C4D2C0;
+  box-shadow: 0 14px 28px rgb(40 122 78 / 12%);
+}
+
+.landing-button {
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.landing-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgb(0 0 0 / 12%);
+}
+
+.landing-button:active {
+  transform: translateY(0);
+}
+
+.landing-button:focus-visible {
+  outline: 2px solid #D6E8A7;
+  outline-offset: 3px;
+}
+
+.landing-nav-link {
+  display: inline-block;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.landing-nav-link:hover {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-card,
+  .landing-button,
+  .landing-hero-image,
+  .landing-nav-link {
+    transition: none;
+  }
+
+  .landing-card:hover,
+  .landing-button:hover,
+  .landing-hero-image:hover,
+  .landing-nav-link:hover {
+    transform: none;
+  }
+}
+
 #app {
   min-height: 100vh;
 }
