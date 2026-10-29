@@ -58,3 +58,17 @@ export function signup(data) {
 export function getCurrentUser() {
   return apiRequest('/auth/me');
 }
+
+export function getDocumentVerificationStatus() {
+  return apiRequest('/auth/signup/document/status');
+}
+
+export function uploadDocument(file) {
+  const body = new FormData();
+  body.append('document', file);
+
+  return apiRequest('/auth/upload-document', {
+    method: 'POST',
+    body,
+  });
+}
