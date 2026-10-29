@@ -1,64 +1,41 @@
 <template>
-  <section id="tecnologia" class="relative bg-white py-24 lg:py-32">
-    <div class="container mx-auto px-6">
-      <div class="mx-auto mb-16 max-w-3xl text-center">
-        <span class="mb-4 inline-block rounded-full bg-slate-100 px-4 py-1.5 text-xs font-bold tracking-widest text-slate-600 uppercase">
-          INTELIGÊNCIA DA PLATAFORMA
-        </span>
-        <h2 class="mb-6 text-3xl leading-tight font-black text-slate-900 md:text-4xl lg:text-5xl">
-          Tecnologia que ajuda você a tomar <span class="text-[#28995E]">decisões melhores.</span>
-        </h2>
-      </div>
+  <section id="tecnologia" class="bg-[#F7F5EF] py-16 min-[720px]:py-20 min-[1080px]:min-h-[650px] min-[1080px]:py-[66px]">
+    <div class="mx-auto max-w-[1440px] px-6 min-[720px]:px-8 min-[1080px]:px-[7.22%]">
+      <p class="mb-5 text-xs font-semibold tracking-[1.4px] text-[#287A4E]">INTELIGÊNCIA DA PLATAFORMA</p>
+      <h2 class="max-w-[1040px] font-display text-4xl leading-tight font-semibold text-[#287A4E] min-[1080px]:text-[46px]">
+        Tecnologia que ajuda você a tomar decisões melhores.
+      </h2>
 
-      <div class="grid gap-8 md:grid-cols-2 lg:gap-12 max-w-5xl mx-auto">
-        <!-- Card 1 -->
-        <div class="group rounded-[2rem] border border-slate-100 bg-slate-50/50 p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white md:p-10">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-100 text-[#2CA961] group-hover:bg-[#2CA961] group-hover:text-white transition-colors">
-            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
+      <div class="mt-9 grid gap-4 min-[720px]:grid-cols-2 min-[1080px]:mt-10 min-[1080px]:gap-x-9 min-[1080px]:gap-y-6">
+        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+          <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">01</span>
+          <div>
+            <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Previsão de Demanda</h3>
+            <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Antecipe tendências e descubra oportunidades futuras de venda.</p>
           </div>
-          <h3 class="mb-3 text-xl font-black text-slate-900">Previsão de Demanda</h3>
-          <p class="text-base text-slate-700 font-medium leading-relaxed">Antecipe tendências e descubra oportunidades futuras de venda.</p>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="group rounded-[2rem] border border-slate-100 bg-slate-50/50 p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white md:p-10">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-100 text-[#2CA961] group-hover:bg-[#2CA961] group-hover:text-white transition-colors">
-            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
+        </article>
+        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+          <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">02</span>
+          <div>
+            <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Precificação Inteligente</h3>
+            <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Sugestões baseadas em dados de mercado para negociações mais justas.</p>
           </div>
-          <h3 class="mb-3 text-xl font-black text-slate-900">Precificação Inteligente</h3>
-          <p class="text-base text-slate-700 font-medium leading-relaxed">Sugestões baseadas em dados de mercado para negociações mais justas.</p>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="group rounded-[2rem] border border-slate-100 bg-slate-50/50 p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white md:p-10">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-100 text-[#2CA961] group-hover:bg-[#2CA961] group-hover:text-white transition-colors">
-            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
+        </article>
+        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+          <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">03</span>
+          <div>
+            <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Busca Geográfica</h3>
+            <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Encontre parceiros próximos e reduza custos operacionais.</p>
           </div>
-          <h3 class="mb-3 text-xl font-black text-slate-900">Busca Geográfica</h3>
-          <p class="text-base text-slate-700 font-medium leading-relaxed">Encontre parceiros próximos e reduza custos operacionais.</p>
-        </div>
-
-        <!-- Card 4 -->
-        <div class="group rounded-[2rem] border border-slate-100 bg-slate-50/50 p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white md:p-10">
-          <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-100 text-[#2CA961] group-hover:bg-[#2CA961] group-hover:text-white transition-colors">
-            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
+        </article>
+        <article class="flex min-h-[150px] gap-5 rounded-2xl border border-[#DFE3D9] bg-[#D6E8A7] p-5 min-[1080px]:px-6">
+          <span class="pt-1 text-[13px] font-semibold tracking-[1px] text-[#287A4E]">04</span>
+          <div>
+            <h3 class="font-display text-[22px] leading-7 font-semibold text-[#287A4E]">Histórico Completo</h3>
+            <p class="mt-3 text-[15px] leading-[23px] text-[#56665D]">Tenha total rastreabilidade das suas negociações.</p>
           </div>
-          <h3 class="mb-3 text-xl font-black text-slate-900">Histórico Completo</h3>
-          <p class="text-base text-slate-700 font-medium leading-relaxed">Tenha total rastreabilidade das suas negociações.</p>
-        </div>
+        </article>
       </div>
     </div>
   </section>
 </template>
-
-<script setup>
-</script>
