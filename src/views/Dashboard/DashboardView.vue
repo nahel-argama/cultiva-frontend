@@ -4,6 +4,7 @@
       <DashboardSidebar
         :profile="profile"
         :active-item-id="activeItemId"
+        :is-verified="isVerified"
         @close-sidebar="sidebarOpen = false"
         @select="handleSelect"
       />
@@ -30,7 +31,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import DashboardShell from '@/components/dashboard/DashboardShell.vue';
@@ -70,10 +71,15 @@ const dashboardViewRegistry = {
 
 const sidebarOpen = ref(false);
 const activeItemId = ref('');
+const isVerified = computed(() => auth.profileData.value?.user?.is_verified === true);
 
 const currentRole = computed(() => auth.profileData.value?.profile_type || 'retailer');
 const profile = computed(() => dashboardProfiles[currentRole.value] || dashboardProfiles.retailer);
-const defaultActiveItemId = computed(() => profile.value.navItems[0]?.id || '');
+const defaultActiveItemId = computed(() =>
+  !isVerified.value && profile.value.navItems.some((item) => item.id === 'meu-perfil')
+    ? 'meu-perfil'
+    : profile.value.navItems[0]?.id || '',
+);
 const userName = computed(() => auth.profileData.value?.user?.name || 'Usuário Cultiva');
 const roleLabel = computed(() => {
   return { producer: 'Produtor', retailer: 'Varejista', delivery: 'Entregador' }[currentRole.value] || 'Usuário';
@@ -94,6 +100,7 @@ function hasNavItem(itemId) {
 }
 
 function handleSelect(itemId) {
+  if (!isVerified.value && itemId !== 'meu-perfil') return;
   activeItemId.value = itemId;
   sidebarOpen.value = false;
 }
@@ -101,12 +108,16 @@ function handleSelect(itemId) {
 watch(
   defaultActiveItemId,
   (nextDefaultItemId) => {
-    if (!hasNavItem(activeItemId.value)) {
+    if (!hasNavItem(activeItemId.value) || (!isVerified.value && activeItemId.value !== 'meu-perfil')) {
       activeItemId.value = nextDefaultItemId;
     }
   },
   { immediate: true },
 );
+
+onMounted(() => {
+  auth.refreshProfile().catch(() => {});
+});
 
 watch(
   () => route.query.tab,
@@ -115,7 +126,7 @@ watch(
       return;
     }
 
-    if (hasNavItem(tabFromQuery)) {
+    if (hasNavItem(tabFromQuery) && (isVerified.value || tabFromQuery === 'meu-perfil')) {
       activeItemId.value = tabFromQuery;
     }
   },

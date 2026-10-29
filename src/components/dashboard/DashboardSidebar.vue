@@ -19,13 +19,22 @@
     </div>
 
     <nav class="mt-6 space-y-2">
+      <p
+        v-if="!isVerified"
+        class="mb-3 rounded-xl bg-red-50 px-4 py-3 text-xs leading-relaxed text-red-700"
+        role="status"
+      >
+        Envie seus documentos para liberar o acesso ao menu.
+      </p>
       <button
         v-for="item in profile.navItems"
         :key="item.label"
         type="button"
-        class="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-700"
+        class="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-600"
         :class="{ 'bg-emerald-50 text-emerald-700': item.id === activeItemId }"
+        :disabled="!isVerified && item.id !== 'meu-perfil'"
         :aria-current="item.id === activeItemId ? 'page' : undefined"
+        :aria-disabled="!isVerified && item.id !== 'meu-perfil'"
         @click="$emit('select', item.id)"
       >
         <component
@@ -50,6 +59,10 @@ defineProps({
   activeItemId: {
     type: String,
     default: '',
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
   },
 });
 

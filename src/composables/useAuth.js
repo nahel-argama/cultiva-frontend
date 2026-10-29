@@ -1,5 +1,5 @@
 import { computed, reactive } from 'vue';
-import { login as loginRequest, signup as signupRequest } from '@/services/api';
+import { getCurrentUser, login as loginRequest, signup as signupRequest } from '@/services/api';
 
 const state = reactive({
   user: JSON.parse(localStorage.getItem('cultiva.user') ?? 'null'),
@@ -61,6 +61,15 @@ export function useAuth() {
     return response.data;
   }
 
+  async function refreshProfile() {
+    const response = await getCurrentUser();
+    state.profileData = response.data;
+    state.user = response.data?.user ?? null;
+    localStorage.setItem('cultiva.auth_data', JSON.stringify(state.profileData));
+    localStorage.setItem('cultiva.user', JSON.stringify(state.user));
+    return state.profileData;
+  }
+
   function logout() {
     setSession(null);
   }
@@ -72,6 +81,7 @@ export function useAuth() {
     isLoggedIn: computed(() => Boolean(state.accessToken)),
     login,
     signup,
+    refreshProfile,
     logout,
   };
 }

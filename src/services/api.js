@@ -54,3 +54,7 @@ export function signup(data) {
     body: JSON.stringify(data),
   });
 }
+
+export function getCurrentUser() {
+  return apiRequest('/auth/me');
+}
