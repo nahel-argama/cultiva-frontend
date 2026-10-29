@@ -1,48 +1,45 @@
 <template>
-  <div class="relative flex min-h-screen items-center justify-center bg-gray-100">
-    <RouterLink
-      to="/"
-      class="absolute top-4 left-4 flex items-center gap-2 rounded-md bg-white/80 px-3 py-2 text-sm font-medium text-slate-700 shadow-md backdrop-blur hover:bg-white"
+  <div class="relative flex min-h-screen items-center justify-center bg-[#F3F1E9] px-6 py-24 lg:py-0">
+    <header class="absolute top-8 inset-x-0 mx-auto flex h-11 w-full max-w-[1440px] items-center justify-between px-6 min-[1080px]:px-[7.22%]">
+      <RouterLink to="/" class="flex items-center gap-3" aria-label="Cultiva, início">
+        <img src="/favicon.png" alt="" class="h-11 w-11 rounded-[10px] object-contain" />
+        <span class="font-display text-[27px] font-semibold text-[#287A4E]">Cultiva</span>
+      </RouterLink>
+      <RouterLink to="/" class="text-sm font-semibold text-[#287A4E] hover:underline">
+        Voltar
+      </RouterLink>
+    </header>
+
+    <div
+      class="flex w-full flex-col rounded-[24px] border border-[#DFE3D9] bg-white p-6 sm:p-10"
+      :class="currentStep === 2 && form.type === 'delivery' ? 'max-w-[900px] min-h-[720px]' : currentStep === 2 ? 'max-w-[820px] min-h-[520px]' : 'max-w-[820px] min-h-[650px]'"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-4 w-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-      Voltar
-    </RouterLink>
+      <h2 class="mb-3 text-center font-display text-[34px] leading-[42px] font-semibold text-[#287A4E]">Criar Conta</h2>
 
-    <div class="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-      <h2 class="mb-6 text-center text-2xl font-bold text-gray-800">Criar Conta</h2>
-
-      <div class="mb-6 flex justify-center">
-        <div class="flex space-x-2">
+      <div class="mb-11 flex justify-center">
+        <div class="flex gap-2.5">
           <div
-            :class="['h-2 w-8 rounded', currentStep >= 1 ? 'bg-green-600' : 'bg-gray-300']"
+            :class="['h-2 w-[110px] rounded-full', currentStep >= 1 ? 'bg-[#287A4E]' : 'bg-[#DFE3D9]']"
           ></div>
           <div
-            :class="['h-2 w-8 rounded', currentStep >= 2 ? 'bg-green-600' : 'bg-gray-300']"
+            :class="['h-2 w-[110px] rounded-full', currentStep >= 2 ? 'bg-[#287A4E]' : 'bg-[#DFE3D9]']"
           ></div>
           <div
-            :class="['h-2 w-8 rounded', currentStep >= 3 ? 'bg-green-600' : 'bg-gray-300']"
+            :class="['h-2 w-[110px] rounded-full', currentStep >= 3 ? 'bg-[#287A4E]' : 'bg-[#DFE3D9]']"
           ></div>
         </div>
       </div>
 
-      <form novalidate @submit.prevent="currentStep < 3 ? nextStep() : handleCadastro()">
+      <form class="flex flex-1 flex-col" novalidate @submit.prevent="currentStep < 3 ? nextStep() : handleCadastro()">
         <!-- Step 1: basico -->
-        <div v-if="currentStep === 1">
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Nome Completo</label>
+        <div v-if="currentStep === 1" class="grid flex-1 content-start grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Nome Completo</label>
             <input
               v-model="form.name"
               maxlength="100"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.name }"
               required
               @input="errors.name && validateName()"
@@ -50,13 +47,13 @@
             <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Email</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Email</label>
             <input
               v-model="form.email"
               maxlength="100"
               type="email"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.email }"
               required
               @input="validateEmail()"
@@ -64,11 +61,11 @@
             <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Eu sou um:</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Eu sou um:</label>
             <select
               v-model="form.type"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
             >
               <option value="producer">Produtor</option>
               <option value="retailer">Varejista</option>
@@ -76,15 +73,15 @@
             </select>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700"
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]"
               >Nome fantasia / Razão social</label
             >
             <input
               v-model="form.nome_fantasia"
               maxlength="100"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.nome_fantasia }"
               required
               @input="errors.nome_fantasia && validateNomeFantasia()"
@@ -94,12 +91,12 @@
             </p>
           </div>
 
-          <div class="mb-6">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Senha</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Senha</label>
             <input
               v-model="form.password"
               type="password"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.password }"
               required
               @input="validatePassword()"
@@ -110,13 +107,13 @@
         </div>
 
         <!-- Step 2: documentos -->
-        <div v-if="currentStep === 2">
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">CNPJ</label>
+        <div v-if="currentStep === 2" class="grid flex-1 content-start grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">CNPJ</label>
             <input
               :value="form.documento"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.documento }"
               placeholder="00.000.000/0000-00"
               maxlength="18"
@@ -126,8 +123,8 @@
             <p v-if="errors.documento" class="mt-1 text-sm text-red-600">{{ errors.documento }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Telefone</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Telefone</label>
             <input
               :value="form.phone"
               type="tel"
@@ -135,7 +132,7 @@
               autocomplete="tel-national"
               placeholder="(00) 00000-0000"
               maxlength="15"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.phone }"
               required
               @input="applyPhoneMask"
@@ -144,14 +141,14 @@
             <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
           </div>
 
-          <div class="mb-4">
-            <label v-if="form.type !== 'delivery'" class="mb-2 block text-sm font-bold text-gray-700">
+          <div v-if="form.type !== 'delivery'" class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">
               {{ form.type === 'producer' ? 'Segmento de atividade' : 'Tipo de negócio' }}
             </label>
             <select
               v-if="form.type === 'producer'"
               v-model="form.activity_segment"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               required
             >
               <option value="vegetables">Hortaliças</option>
@@ -164,7 +161,7 @@
             <select
               v-else-if="form.type === 'retailer'"
               v-model="form.business_type"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               required
             >
               <option value="supermarket">Supermercado</option>
@@ -174,15 +171,15 @@
           </div>
 
           <template v-if="form.type === 'delivery'">
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Número da CNH</label>
+            <div class="min-w-0">
+              <label class="mb-2 block text-sm font-semibold text-[#56665D]">Número da CNH</label>
               <input
                 v-model="form.cnh_number"
                 type="text"
                 inputmode="numeric"
                 maxlength="11"
                 placeholder="11 dígitos"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
                 :class="{ 'border-red-500': errors.cnh_number }"
                 required
                 @input="form.cnh_number = form.cnh_number.replace(/\D/g, '').slice(0, 11)"
@@ -190,11 +187,11 @@
               <p v-if="errors.cnh_number" class="mt-1 text-sm text-red-600">{{ errors.cnh_number }}</p>
             </div>
 
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Categoria da CNH</label>
+            <div class="min-w-0">
+              <label class="mb-2 block text-sm font-semibold text-[#56665D]">Categoria da CNH</label>
               <select
                 v-model="form.cnh_category"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+                class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
                 required
               >
                 <option value="A">Categoria A</option>
@@ -209,14 +206,14 @@
               </select>
             </div>
 
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Placa do veículo</label>
+            <div class="min-w-0">
+              <label class="mb-2 block text-sm font-semibold text-[#56665D]">Placa do veículo</label>
               <input
                 v-model="form.vehicle_plate"
                 type="text"
                 maxlength="8"
                 placeholder="ABC1D23"
-                class="w-full rounded-lg border px-3 py-2 uppercase focus:ring-2 focus:ring-green-800 focus:outline-none"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] uppercase outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
                 :class="{ 'border-red-500': errors.vehicle_plate }"
                 required
                 @input="form.vehicle_plate = form.vehicle_plate.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8)"
@@ -224,11 +221,11 @@
               <p v-if="errors.vehicle_plate" class="mt-1 text-sm text-red-600">{{ errors.vehicle_plate }}</p>
             </div>
 
-            <div class="mb-4">
-              <label class="mb-2 block text-sm font-bold text-gray-700">Tipo de carga</label>
+            <div class="min-w-0">
+              <label class="mb-2 block text-sm font-semibold text-[#56665D]">Tipo de carga</label>
               <select
                 v-model="form.cargo_type"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+                class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
                 required
               >
                 <option value="dry">Carga Seca</option>
@@ -237,8 +234,8 @@
               </select>
             </div>
 
-            <div class="mb-4">
-              <label for="vehicle_capacity" class="mb-2 block text-sm font-bold text-gray-700">
+            <div class="min-w-0">
+              <label for="vehicle_capacity" class="mb-2 block text-sm font-semibold text-[#56665D]">
                 Capacidade do veículo (kg)
               </label>
               <input
@@ -247,7 +244,7 @@
                 type="number"
                 min="0.01"
                 step="0.01"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
                 :class="{ 'border-red-500': errors.vehicle_capacity }"
                 required
                 @input="errors.vehicle_capacity && validateDeliveryFields()"
@@ -259,14 +256,14 @@
         </div>
 
         <!-- Step 3: endereços -->
-        <div v-if="currentStep === 3">
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">CEP</label>
+        <div v-if="currentStep === 3" class="grid flex-1 content-start grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">CEP</label>
             <div class="relative">
               <input
                 :value="form.cep"
                 type="text"
-                class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
                 :class="{ 'border-red-500': errors.cep, 'bg-gray-50': isSearchingCep }"
                 placeholder="00000-000"
                 maxlength="9"
@@ -301,12 +298,12 @@
             <p v-if="errors.cep" class="mt-1 text-sm text-red-600">{{ errors.cep }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Rua</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Rua</label>
             <input
               v-model="form.rua"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.rua }"
               required
               @input="errors.rua && validateRua()"
@@ -314,13 +311,13 @@
             <p v-if="errors.rua" class="mt-1 text-sm text-red-600">{{ errors.rua }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Número</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Número</label>
             <input
               v-model="form.numero"
               maxlength="20"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.numero }"
               required
               @input="errors.numero && validateNumero()"
@@ -328,12 +325,12 @@
             <p v-if="errors.numero" class="mt-1 text-sm text-red-600">{{ errors.numero }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Bairro</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Bairro</label>
             <input
               v-model="form.bairro"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.bairro }"
               required
               @input="errors.bairro && validateBairro()"
@@ -341,12 +338,12 @@
             <p v-if="errors.bairro" class="mt-1 text-sm text-red-600">{{ errors.bairro }}</p>
           </div>
 
-          <div class="mb-4">
-            <label class="mb-2 block text-sm font-bold text-gray-700">Cidade</label>
+          <div class="min-w-0">
+            <label class="mb-2 block text-sm font-semibold text-[#56665D]">Cidade</label>
             <input
               v-model="form.cidade"
               type="text"
-              class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
               :class="{ 'border-red-500': errors.cidade }"
               required
               @input="errors.cidade && validateCidade()"
@@ -354,7 +351,7 @@
             <p v-if="errors.cidade" class="mt-1 text-sm text-red-600">{{ errors.cidade }}</p>
           </div>
 
-          <div class="mb-4">
+          <div class="min-w-0">
             <AppSelect
               v-model="form.estado"
               :options="stateOptions"
@@ -363,15 +360,16 @@
               placeholder="Selecione o estado"
               required
               :error="errors.estado"
+              class="[&_label]:mb-2 [&_label]:text-sm [&_label]:font-semibold [&_label]:text-[#56665D] [&_select]:h-12 [&_select]:cursor-pointer [&_select]:rounded-[11px] [&_select]:border-[#DFE3D9] [&_select]:px-3.5 [&_select]:py-3 [&_select]:text-sm [&_select]:focus:border-[#287A4E] [&_select]:focus:ring-2 [&_select]:focus:ring-[#D6E8A7]"
             />
           </div>
         </div>
 
-        <div class="flex justify-between">
+        <div class="mt-auto flex justify-between pt-8">
           <button
             v-if="currentStep > 1"
             type="button"
-            class="rounded-lg border px-4 py-2 font-bold text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
+            class="h-12 min-w-[150px] cursor-pointer rounded-full border border-[#DFE3D9] px-4 text-sm font-semibold text-[#287A4E] transition hover:bg-[#F7F5EF] disabled:cursor-not-allowed disabled:opacity-70"
             :disabled="isLoading"
             @click="prevStep"
           >
@@ -379,7 +377,7 @@
           </button>
           <button
             type="submit"
-            class="bg-primary hover:bg-secondary flex items-center justify-center rounded-lg px-4 py-2 font-bold text-white transition duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+            class="flex h-12 min-w-[150px] cursor-pointer items-center justify-center rounded-full bg-[#287A4E] px-4 text-sm font-semibold text-white transition hover:bg-[#226640] disabled:cursor-not-allowed disabled:opacity-70"
             :disabled="isLoading"
           >
             <svg
@@ -409,7 +407,7 @@
         </div>
       </form>
 
-      <RouterLink to="/login" class="mt-6 block text-center text-blue-800">
+      <RouterLink to="/login" class="mt-6 block text-center text-sm text-[#287A4E] hover:underline">
         Já tem uma conta?
       </RouterLink>
     </div>

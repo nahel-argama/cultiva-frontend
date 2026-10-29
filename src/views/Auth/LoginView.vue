@@ -1,23 +1,17 @@
 <template>
-  <div class="relative flex min-h-screen items-center justify-center bg-gray-100">
-    <RouterLink
-      to="/"
-      class="absolute top-4 left-4 flex items-center gap-2 rounded-md bg-white/80 px-3 py-2 text-sm font-medium text-slate-700 shadow-md backdrop-blur hover:bg-white"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-4 w-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-      Voltar
-    </RouterLink>
+  <div class="relative flex min-h-screen items-center justify-center bg-[#F3F1E9] px-6 py-24 lg:py-0">
+    <header class="absolute top-8 inset-x-0 mx-auto flex h-11 w-full max-w-[1440px] items-center justify-between px-6 min-[1080px]:px-[7.22%]">
+      <RouterLink to="/" class="flex items-center gap-3" aria-label="Cultiva, início">
+        <img src="/favicon.png" alt="" class="h-11 w-11 rounded-[10px] object-contain" />
+        <span class="font-display text-[27px] font-semibold text-[#287A4E]">Cultiva</span>
+      </RouterLink>
+      <RouterLink to="/" class="text-sm font-semibold text-[#287A4E] hover:underline">
+        Voltar
+      </RouterLink>
+    </header>
 
-    <div class="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-      <h2 class="mb-6 text-center text-2xl font-bold text-gray-800">Login</h2>
+    <div class="flex min-h-[520px] w-full max-w-[500px] flex-col rounded-[24px] border border-[#DFE3D9] bg-white p-8 sm:p-10">
+      <h2 class="mb-12 text-center font-display text-[34px] leading-[42px] font-semibold text-[#287A4E]">Login</h2>
 
       <!-- Mensagem de erro -->
       <div v-if="errorMessage" class="mb-4 rounded-lg bg-red-50 p-4">
@@ -25,23 +19,23 @@
       </div>
 
       <form @submit.prevent="handleLogin">
-        <div class="mb-4">
-          <label class="mb-2 block text-sm font-bold text-gray-700">Email</label>
+        <div class="mb-7">
+          <label class="mb-2 block text-sm font-semibold text-[#56665D]">Email</label>
           <input
             v-model="credenciais.email"
             type="email"
-            class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+            class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
             :disabled="isLoading"
             required
           />
         </div>
 
-        <div class="mb-6">
-          <label class="mb-2 block text-sm font-bold text-gray-700">Senha</label>
+        <div class="mb-9">
+          <label class="mb-2 block text-sm font-semibold text-[#56665D]">Senha</label>
           <input
             v-model="credenciais.password"
             type="password"
-            class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+            class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
             :disabled="isLoading"
             required
           />
@@ -50,13 +44,13 @@
         <button
           type="submit"
           :disabled="isLoading"
-          class="bg-primary hover:bg-secondary w-full rounded-lg px-4 py-2 font-bold text-white transition duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+          class="h-12 w-full cursor-pointer rounded-full bg-[#287A4E] px-4 text-sm font-semibold text-white transition hover:bg-[#226640] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {{ isLoading ? 'Entrando...' : 'Entrar' }}
         </button>
 
-        <div class="mt-4 text-center">
-          <RouterLink to="/register" class="text-sm text-blue-800 hover:underline">
+        <div class="mt-8 text-center">
+          <RouterLink to="/register" class="text-sm text-[#287A4E] hover:underline">
             Não possui conta?
           </RouterLink>
         </div>
