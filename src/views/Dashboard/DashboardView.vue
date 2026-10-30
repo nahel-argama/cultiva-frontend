@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import DashboardShell from '@/components/dashboard/DashboardShell.vue';
@@ -46,13 +46,15 @@ import SalesHistoryView from '@/components/dashboard/views/SalesHistoryView.vue'
 import ProfileView from '@/components/dashboard/views/ProfileView.vue';
 import DashboardPlaceholderView from '@/components/dashboard/views/DashboardPlaceholderView.vue';
 
+const WishlistAnalyticsView = defineAsyncComponent(() => import('@/components/dashboard/views/WishlistAnalyticsView.vue'));
+
 const auth = useAuth();
 const route = useRoute();
 const dashboardViewRegistry = {
   producer: {
     'meu-estoque': StockView,
     'historico-venda': SalesHistoryView,
-    'wishlist-analytics': DashboardPlaceholderView,
+    'wishlist-analytics': WishlistAnalyticsView,
     'meu-perfil': ProfileView,
   },
   retailer: {
