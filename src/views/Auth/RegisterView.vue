@@ -272,7 +272,7 @@
                 @input="applyCepMask"
                 @blur="handleCepBlur"
               />
-              <div v-if="isSearchingCep" class="absolute top-2 right-3">
+              <div v-if="isSearchingCep" class="absolute top-1/2 right-3 -translate-y-1/2">
                 <svg
                   class="h-5 w-5 animate-spin text-green-800"
                   xmlns="http://www.w3.org/2000/svg"
