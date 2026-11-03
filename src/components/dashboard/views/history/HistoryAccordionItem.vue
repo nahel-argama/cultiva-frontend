@@ -1,6 +1,6 @@
 <template>
   <article
-    class="overflow-hidden rounded-[24px] border border-white/70 bg-white/90 shadow-sm transition hover:border-emerald-200 hover:shadow-lg"
+    class="overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-sm transition hover:border-emerald-200 hover:shadow-lg"
   >
     <button
       type="button"

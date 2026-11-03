@@ -75,7 +75,7 @@
     </template>
 
     <div v-else-if="isLoading" class="space-y-4">
-      <div v-for="i in 5" :key="i" class="h-16 animate-pulse rounded-[16px] bg-slate-100"></div>
+      <div v-for="i in 5" :key="i" class="h-16 animate-pulse rounded-2xl bg-slate-100"></div>
     </div>
 
     <EmptyState v-else />

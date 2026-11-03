@@ -1,6 +1,6 @@
 <template>
   <article
-    class="group overflow-hidden rounded-[24px] border border-white/70 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg"
+    class="group overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg"
   >
     <div class="p-5">
       <div class="flex items-start justify-between gap-4">

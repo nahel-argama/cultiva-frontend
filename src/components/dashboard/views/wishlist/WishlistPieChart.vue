@@ -9,7 +9,10 @@
 
 <script setup>
 import { computed } from 'vue';
-import VueApexCharts from 'vue3-apexcharts';
+import 'apexcharts/pie';
+import 'apexcharts/features/legend';
+import 'apexcharts/features/keyboard';
+import VueApexCharts from 'vue3-apexcharts/core';
 
 const props = defineProps({
   results: { type: Array, required: true },

@@ -11,7 +11,7 @@
     </header>
 
     <div
-      class="flex w-full flex-col rounded-[24px] border border-[#DFE3D9] bg-white p-6 sm:p-10"
+      class="flex w-full flex-col rounded-3xl border border-[#DFE3D9] bg-white p-6 sm:p-10"
       :class="currentStep === 2 && form.type === 'delivery' ? 'max-w-[900px] min-h-[720px]' : currentStep === 2 ? 'max-w-[820px] min-h-[520px]' : 'max-w-[820px] min-h-[650px]'"
     >
       <h2 class="mb-3 text-center font-display text-[34px] leading-[42px] font-semibold text-[#287A4E]">Criar Conta</h2>

@@ -10,7 +10,7 @@
       </RouterLink>
     </header>
 
-    <div class="flex min-h-[520px] w-full max-w-[500px] flex-col rounded-[24px] border border-[#DFE3D9] bg-white p-8 sm:p-10">
+    <div class="flex min-h-[520px] w-full max-w-[500px] flex-col rounded-3xl border border-[#DFE3D9] bg-white p-8 sm:p-10">
       <h2 class="mb-12 text-center font-display text-[34px] leading-[42px] font-semibold text-[#287A4E]">Login</h2>
 
       <!-- Mensagem de erro -->
