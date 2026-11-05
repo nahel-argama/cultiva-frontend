@@ -1,9 +1,9 @@
 <template>
-  <section id="como-funciona" class="bg-[#D6E8A7] py-16 min-[720px]:py-20 min-[1080px]:min-h-[750px] min-[1080px]:py-[60px]">
+  <section id="como-funciona" class="bg-[#2CA961] py-16 min-[720px]:py-20 min-[1080px]:min-h-[750px] min-[1080px]:py-[60px]">
     <div class="mx-auto max-w-[1440px] px-6 min-[720px]:px-8 min-[1080px]:px-[7.22%]">
-      <p class="mb-5 text-xs font-semibold tracking-[1.4px] text-[#56665D]">COMO FUNCIONA</p>
-      <h2 class="font-display text-4xl leading-tight font-semibold text-[#287A4E] min-[1080px]:text-5xl">Tudo acontece em poucos passos.</h2>
-      <p class="mt-5 max-w-[950px] text-[15px] leading-[27px] text-[#56665D] min-[1080px]:text-[17px]">
+      <p class="mb-5 text-xs font-semibold tracking-[1.4px] text-white">COMO FUNCIONA</p>
+      <h2 class="font-display text-4xl leading-tight font-semibold text-white min-[1080px]:text-5xl">Tudo acontece em poucos passos.</h2>
+      <p class="mt-5 max-w-[950px] text-[15px] leading-[27px] text-white min-[1080px]:text-[17px]">
         O Cultiva simplifica a conexão entre produtores e varejistas através de um processo intuitivo e orientado por dados.
       </p>
 

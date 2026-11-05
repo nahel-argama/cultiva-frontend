@@ -24,7 +24,7 @@
           <input
             v-model="credenciais.email"
             type="email"
-            class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+            class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
             :disabled="isLoading"
             required
           />
@@ -35,7 +35,7 @@
           <input
             v-model="credenciais.password"
             type="password"
-            class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+            class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
             :disabled="isLoading"
             required
           />

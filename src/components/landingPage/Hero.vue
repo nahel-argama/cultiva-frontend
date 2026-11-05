@@ -9,7 +9,7 @@
           O Cultiva elimina atravessadores e conecta o pequeno produtor ao varejo local através do nosso website.
         </p>
         <div class="mt-8 flex flex-col gap-3 min-[720px]:mt-10 min-[720px]:flex-row min-[720px]:flex-wrap min-[1080px]:mt-[83px]">
-          <RouterLink to="/register?type=PRODUCER" class="landing-button inline-flex min-h-12 items-center justify-center rounded-full bg-[#D6E8A7] px-7 text-[15px] font-semibold text-[#56665D] hover:bg-white">
+          <RouterLink to="/register?type=PRODUCER" class="landing-button inline-flex min-h-12 items-center justify-center rounded-full bg-[#F7F5EF] px-7 text-[15px] font-semibold text-[#56665D] hover:bg-white">
             Sou Produtor
           </RouterLink>
           <RouterLink to="/register?type=RETAILER" class="landing-button inline-flex min-h-12 items-center justify-center rounded-full border border-[#DFE3D9] bg-white px-7 text-[15px] font-semibold text-[#287A4E] hover:bg-[#F7F5EF]">
@@ -26,7 +26,7 @@
             class="landing-hero-image h-[320px] w-full rounded-[18px] object-cover transition-transform duration-500 hover:scale-[1.02] min-[720px]:h-[360px] min-[1080px]:h-[508px]"
           />
         </div>
-        <div class="landing-card relative mx-auto -mt-10 min-h-[146px] w-[min(264px,calc(100%-32px))] rounded-[18px] border border-[#DFE3D9] bg-[#D6E8A7] p-5 text-[#287A4E] min-[720px]:absolute min-[720px]:bottom-[-24px] min-[720px]:left-[-48px] min-[720px]:mx-0 min-[720px]:mt-0 min-[1080px]:bottom-[-15px] min-[1080px]:left-[-70px]">
+        <div class="landing-card relative mx-auto -mt-10 min-h-[146px] w-[min(264px,calc(100%-32px))] rounded-[18px] border border-[#DFE3D9] bg-[#F7F5EF] p-5 text-[#287A4E] min-[720px]:absolute min-[720px]:bottom-[-24px] min-[720px]:left-[-48px] min-[720px]:mx-0 min-[720px]:mt-0 min-[1080px]:bottom-[-15px] min-[1080px]:left-[-70px]">
           <h2 class="font-display text-[27px] leading-tight font-semibold">Média de preços</h2>
           <p class="mt-2 text-sm leading-[21px] text-[#56665D]">Preços otimizados com dados da plataforma</p>
         </div>

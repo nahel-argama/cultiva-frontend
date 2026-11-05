@@ -39,7 +39,7 @@
               v-model="form.name"
               maxlength="100"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.name }"
               required
               @input="errors.name && validateName()"
@@ -53,7 +53,7 @@
               v-model="form.email"
               maxlength="100"
               type="email"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.email }"
               required
               @input="validateEmail()"
@@ -65,7 +65,7 @@
             <label class="mb-2 block text-sm font-semibold text-[#56665D]">Eu sou um:</label>
             <select
               v-model="form.type"
-              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
             >
               <option value="producer">Produtor</option>
               <option value="retailer">Varejista</option>
@@ -81,7 +81,7 @@
               v-model="form.nome_fantasia"
               maxlength="100"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.nome_fantasia }"
               required
               @input="errors.nome_fantasia && validateNomeFantasia()"
@@ -96,7 +96,7 @@
             <input
               v-model="form.password"
               type="password"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.password }"
               required
               @input="validatePassword()"
@@ -113,7 +113,7 @@
             <input
               :value="form.documento"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.documento }"
               placeholder="00.000.000/0000-00"
               maxlength="18"
@@ -132,7 +132,7 @@
               autocomplete="tel-national"
               placeholder="(00) 00000-0000"
               maxlength="15"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.phone }"
               required
               @input="applyPhoneMask"
@@ -148,7 +148,7 @@
             <select
               v-if="form.type === 'producer'"
               v-model="form.activity_segment"
-              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               required
             >
               <option value="vegetables">Hortaliças</option>
@@ -161,7 +161,7 @@
             <select
               v-else-if="form.type === 'retailer'"
               v-model="form.business_type"
-              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               required
             >
               <option value="supermarket">Supermercado</option>
@@ -179,7 +179,7 @@
                 inputmode="numeric"
                 maxlength="11"
                 placeholder="11 dígitos"
-                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
                 :class="{ 'border-red-500': errors.cnh_number }"
                 required
                 @input="form.cnh_number = form.cnh_number.replace(/\D/g, '').slice(0, 11)"
@@ -191,7 +191,7 @@
               <label class="mb-2 block text-sm font-semibold text-[#56665D]">Categoria da CNH</label>
               <select
                 v-model="form.cnh_category"
-                class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+                class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
                 required
               >
                 <option value="A">Categoria A</option>
@@ -213,7 +213,7 @@
                 type="text"
                 maxlength="8"
                 placeholder="ABC1D23"
-                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] uppercase outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] uppercase outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
                 :class="{ 'border-red-500': errors.vehicle_plate }"
                 required
                 @input="form.vehicle_plate = form.vehicle_plate.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8)"
@@ -225,7 +225,7 @@
               <label class="mb-2 block text-sm font-semibold text-[#56665D]">Tipo de carga</label>
               <select
                 v-model="form.cargo_type"
-                class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+                class="h-12 w-full cursor-pointer rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
                 required
               >
                 <option value="dry">Carga Seca</option>
@@ -244,7 +244,7 @@
                 type="number"
                 min="0.01"
                 step="0.01"
-                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
                 :class="{ 'border-red-500': errors.vehicle_capacity }"
                 required
                 @input="errors.vehicle_capacity && validateDeliveryFields()"
@@ -263,7 +263,7 @@
               <input
                 :value="form.cep"
                 type="text"
-                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+                class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
                 :class="{ 'border-red-500': errors.cep, 'bg-gray-50': isSearchingCep }"
                 placeholder="00000-000"
                 maxlength="9"
@@ -303,7 +303,7 @@
             <input
               v-model="form.rua"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.rua }"
               required
               @input="errors.rua && validateRua()"
@@ -317,7 +317,7 @@
               v-model="form.numero"
               maxlength="20"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.numero }"
               required
               @input="errors.numero && validateNumero()"
@@ -330,7 +330,7 @@
             <input
               v-model="form.bairro"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.bairro }"
               required
               @input="errors.bairro && validateBairro()"
@@ -343,7 +343,7 @@
             <input
               v-model="form.cidade"
               type="text"
-              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#D6E8A7]"
+              class="h-12 w-full rounded-[11px] border border-[#DFE3D9] bg-white px-3.5 py-3 text-sm text-[#56665D] outline-none focus:border-[#287A4E] focus:ring-2 focus:ring-[#287A4E]"
               :class="{ 'border-red-500': errors.cidade }"
               required
               @input="errors.cidade && validateCidade()"
@@ -360,7 +360,7 @@
               placeholder="Selecione o estado"
               required
               :error="errors.estado"
-              class="[&_label]:mb-2 [&_label]:text-sm [&_label]:font-semibold [&_label]:text-[#56665D] [&_select]:h-12 [&_select]:cursor-pointer [&_select]:rounded-[11px] [&_select]:border-[#DFE3D9] [&_select]:px-3.5 [&_select]:py-3 [&_select]:text-sm [&_select]:focus:border-[#287A4E] [&_select]:focus:ring-2 [&_select]:focus:ring-[#D6E8A7]"
+              class="[&_label]:mb-2 [&_label]:text-sm [&_label]:font-semibold [&_label]:text-[#56665D] [&_select]:h-12 [&_select]:cursor-pointer [&_select]:rounded-[11px] [&_select]:border-[#DFE3D9] [&_select]:px-3.5 [&_select]:py-3 [&_select]:text-sm [&_select]:focus:border-[#287A4E] [&_select]:focus:ring-2 [&_select]:focus:ring-[#287A4E]"
             />
           </div>
         </div>
