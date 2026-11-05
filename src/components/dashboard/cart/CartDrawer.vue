@@ -1,19 +1,19 @@
 <template>
   <Teleport to="body">
-    <div v-if="modelValue" class="fixed inset-0 z-50">
+    <div v-if="modelValue" class="dashboard-theme fixed inset-0 z-50">
       <div class="absolute inset-0 bg-slate-950/50" @click="closeDrawer"></div>
 
       <aside
-        class="absolute top-0 right-0 flex h-full w-full max-w-xl flex-col border-l border-white/70 bg-white/95 shadow-2xl backdrop-blur-xl"
+        class="absolute top-0 right-0 flex h-full w-full max-w-xl flex-col border-l border-slate-200 bg-[#F7F5EF] shadow-2xl backdrop-blur-xl"
       >
-        <header class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+        <header class="flex items-center justify-between border-b border-slate-200 bg-white/75 px-6 py-5">
           <div>
             <p class="text-xs font-bold tracking-[0.24em] text-emerald-600 uppercase">Carrinho</p>
             <h2 class="mt-1 text-xl font-black tracking-tight text-slate-900">Pedidos pendentes</h2>
           </div>
           <button
             type="button"
-            class="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            class="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
             @click="closeDrawer"
           >
             <XMarkIcon class="h-5 w-5" />
@@ -23,7 +23,7 @@
         <div class="flex-1 overflow-y-auto p-5">
           <div
             v-if="!orders.length"
-            class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center"
+            class="rounded-2xl border border-dashed border-slate-300 bg-white/70 px-6 py-12 text-center"
           >
             <p class="text-sm font-semibold text-slate-700">Carrinho vazio</p>
             <p class="mt-2 text-xs text-slate-500">Adicione produtos em “Explorar Ofertas”.</p>
@@ -33,7 +33,7 @@
             <section
               v-for="order in orders"
               :key="order.id"
-              class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
             >
               <div class="flex items-start justify-between gap-3">
                 <div>
@@ -43,7 +43,9 @@
                   <h3 class="mt-1 text-base font-black text-slate-900">
                     {{ getProducerLabel(order) }}
                   </h3>
-                  <p class="mt-1 text-xs text-slate-500">Pedido #{{ order.id }}</p>
+                  <p v-if="!String(order.id).startsWith('draft-')" class="mt-1 text-xs text-slate-500">
+                    Pedido #{{ order.id }}
+                  </p>
                 </div>
                 <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
                   {{ order.status }}
@@ -54,7 +56,7 @@
                 <article
                   v-for="item in getOrderItems(order)"
                   :key="item.id"
-                  class="rounded-xl border border-slate-100 bg-slate-50 p-3"
+                  class="rounded-xl border border-slate-200 bg-slate-50 p-3"
                 >
                   <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
@@ -125,7 +127,7 @@
 
                 <button
                   type="button"
-                  class="mt-3 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  class="mt-3 w-full rounded-xl bg-emerald-600 px-4 py-3.5 text-sm font-black text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                   :disabled="getOrderItems(order).length === 0"
                   @click="$emit('checkout-order', order.id)"
                 >

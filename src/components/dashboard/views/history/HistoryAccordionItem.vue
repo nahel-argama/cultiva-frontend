@@ -190,8 +190,8 @@ const statusClasses = {
   padding: 6px 14px;
   border-radius: 20px;
   border: none;
-  background: #052e16;
-  color: #a7f3d0;
+  background: #287A4E;
+  color: #ffffff;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -203,7 +203,7 @@ const statusClasses = {
 }
 
 .invoice-btn:hover {
-  background: #14532d;
+  background: #226640;
   transform: translateY(-1px);
 }
 

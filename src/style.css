@@ -47,6 +47,63 @@ body {
   font-family: Fraunces, Georgia, serif;
 }
 
+.dashboard-theme {
+  --color-slate-50: #F7F5EF;
+  --color-slate-100: #F1F0E9;
+  --color-slate-200: #DFE3D9;
+  --color-slate-300: #CBD4C9;
+  --color-slate-400: #859187;
+  --color-slate-500: #718077;
+  --color-slate-600: #56665D;
+  --color-slate-700: #415449;
+  --color-slate-800: #33463A;
+  --color-slate-900: #253C2F;
+  --color-emerald-50: #EEF7EF;
+  --color-emerald-100: #DEEEDE;
+  --color-emerald-200: #C7DFC9;
+  --color-emerald-300: #ACD1B0;
+  --color-emerald-400: #7FC18D;
+  --color-emerald-500: #2CA961;
+  --color-emerald-600: #287A4E;
+  --color-emerald-700: #226640;
+  --color-emerald-800: #1B5435;
+  --color-emerald-900: #143E2A;
+  --radius-3xl: 1.125rem;
+  --radius-2xl: 1rem;
+  --radius-xl: 0.875rem;
+  --radius-lg: 0.75rem;
+  --radius-md: 0.625rem;
+  --radius-sm: 0.5rem;
+}
+
+.dashboard-theme :is(h1, h2, h3) {
+  font-family: Fraunces, Georgia, serif;
+}
+
+.dashboard-theme [class~="rounded-[28px]"],
+.dashboard-theme [class~="rounded-[30px]"] {
+  border-radius: 1.125rem;
+}
+
+.dashboard-theme [class~="rounded-[22px]"] {
+  border-radius: 0.875rem;
+}
+
+.dashboard-theme [class*="shadow-["] {
+  box-shadow: 0 12px 28px rgb(39 59 48 / 8%);
+}
+
+.dashboard-theme input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.dashboard-theme input[type="number"]::-webkit-inner-spin-button,
+.dashboard-theme input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
 .landing-card {
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }

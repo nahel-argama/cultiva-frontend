@@ -4,7 +4,7 @@
   >
     <div class="flex items-start gap-3">
       <button
-        class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-600 lg:hidden"
+        class="rounded-xl border border-slate-200 bg-white p-3 text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 lg:hidden"
         type="button"
         @click="$emit('toggle-sidebar')"
       >
@@ -12,7 +12,7 @@
       </button>
 
       <div>
-        <p class="text-xs font-semibold tracking-[0.24em] text-emerald-600 uppercase">
+        <p class="text-[11px] font-bold tracking-[0.22em] text-emerald-700 uppercase">
           {{ roleLabel }}
         </p>
         <h1 class="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
@@ -28,21 +28,21 @@
       <button
         v-if="showCartButton"
         type="button"
-        class="relative flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50"
+        class="relative flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
         @click="toggleCart"
       >
-        <ShoppingCartIcon class="h-5 w-5 text-emerald-600" />
+        <ShoppingCartIcon class="h-5 w-5 text-white" />
         <span class="hidden sm:inline">Carrinho</span>
         <span
           v-if="cartItemsCount > 0"
-          class="inline-flex min-w-6 items-center justify-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-black text-white"
+          class="inline-flex min-w-6 items-center justify-center rounded-full bg-white px-2 py-0.5 text-xs font-black text-emerald-700"
         >
           {{ cartItemsCount }}
         </span>
       </button>
 
       <button
-        class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50"
+        class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50"
         type="button"
         @click="toggleMenu"
       >
@@ -57,11 +57,11 @@
 
       <div
         v-if="showMenu"
-        class="absolute top-full right-0 z-30 mt-2 min-w-44 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg"
+        class="absolute top-full right-0 z-30 mt-2 min-w-48 overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-lg"
       >
         <button
           type="button"
-          class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-red-600"
+          class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-red-600"
           @click="handleLogout"
         >
           <ArrowRightOnRectangleIcon class="h-4 w-4 text-red-500" />

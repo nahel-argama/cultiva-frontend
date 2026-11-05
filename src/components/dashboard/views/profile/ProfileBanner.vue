@@ -11,7 +11,7 @@
     />
     <div
       v-else
-      class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(110,231,183,0.4)_0,transparent_44%),linear-gradient(130deg,#134e4a_0%,#064e3b_52%,#052e2b_100%)]"
+      class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(127,193,141,0.32)_0,transparent_44%),linear-gradient(130deg,#287A4E_0%,#226640_52%,#143E2A_100%)]"
     ></div>
 
     <div
