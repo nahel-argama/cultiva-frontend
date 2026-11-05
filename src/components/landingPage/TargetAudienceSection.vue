@@ -1,12 +1,12 @@
 <template>
   <section id="beneficios" class="bg-[#2CA961] py-16 text-white min-[720px]:py-20 min-[1080px]:min-h-[1050px] min-[1080px]:py-14">
     <div class="mx-auto max-w-[1440px] px-6 min-[720px]:px-8 min-[1080px]:px-[7.22%]">
-      <p class="mb-5 text-xs font-semibold tracking-[1.4px]">PARA QUEM É O CULTIVA</p>
-      <h2 class="font-display text-4xl leading-tight font-semibold min-[1080px]:text-[46px]">Construído para quem faz o mercado acontecer.</h2>
-      <p class="mt-5 text-[15px] leading-[27px] min-[1080px]:text-[17px]">O resultado é uma cadeia mais eficiente para todos.</p>
+      <p data-scroll-reveal class="mb-5 text-xs font-semibold tracking-[1.4px]">PARA QUEM É O CULTIVA</p>
+      <h2 data-scroll-reveal class="font-display text-4xl leading-tight font-semibold min-[1080px]:text-[46px]">Construído para quem faz o mercado acontecer.</h2>
+      <p data-scroll-reveal class="mt-5 text-[15px] leading-[27px] min-[1080px]:text-[17px]">O resultado é uma cadeia mais eficiente para todos.</p>
 
-      <div class="mt-10 grid items-stretch gap-5 min-[720px]:grid-cols-2 min-[1080px]:mt-[68px] min-[1080px]:grid-cols-3 min-[1080px]:gap-[46px]">
-        <article class="landing-card flex flex-col rounded-[18px] border border-[#DFE3D9] bg-[#F7F5EF] p-6 text-[#287A4E] min-[1080px]:min-h-[700px] min-[1080px]:p-[27px]">
+      <div data-scroll-reveal-group class="mt-10 grid items-stretch gap-5 min-[720px]:grid-cols-2 min-[1080px]:mt-[68px] min-[1080px]:grid-cols-3 min-[1080px]:gap-[46px]">
+        <article data-scroll-reveal class="landing-card flex flex-col rounded-[18px] border border-[#DFE3D9] bg-[#F7F5EF] p-6 text-[#287A4E] min-[1080px]:min-h-[700px] min-[1080px]:p-[27px]">
           <h3 class="font-display text-[26px] leading-8 font-semibold">Pequenos Produtores</h3>
           <ul class="mt-8 space-y-4 text-[15px] leading-[21px]">
             <li class="flex gap-3"><span class="mt-2 h-[7px] w-[7px] shrink-0 rounded-full bg-[#2CA961]"></span>Mais visibilidade</li>
@@ -20,7 +20,7 @@
           </div>
         </article>
 
-        <article id="impacto" class="landing-card flex flex-col rounded-[18px] bg-[#287A4E] p-6 text-white min-[1080px]:min-h-[700px] min-[1080px]:p-7">
+        <article id="impacto" data-scroll-reveal class="landing-card flex flex-col rounded-[18px] bg-[#287A4E] p-6 text-white min-[1080px]:min-h-[700px] min-[1080px]:p-7">
           <h3 class="font-display text-[26px] leading-8 font-semibold">Cadeia Eficiente</h3>
           <p class="mt-5 text-base leading-[25px]">
             Ao conectar as pontas do mercado, o Cultiva resolve gargalos históricos e gera benefícios que impactam toda a sociedade.
@@ -37,7 +37,7 @@
           </div>
         </article>
 
-        <article class="landing-card flex flex-col rounded-[18px] border border-[#DFE3D9] bg-[#F7F5EF] p-6 text-[#287A4E] min-[1080px]:min-h-[700px] min-[1080px]:p-[27px]">
+        <article data-scroll-reveal class="landing-card flex flex-col rounded-[18px] border border-[#DFE3D9] bg-[#F7F5EF] p-6 text-[#287A4E] min-[1080px]:min-h-[700px] min-[1080px]:p-[27px]">
           <h3 class="font-display text-[26px] leading-8 font-semibold">Varejistas</h3>
           <ul class="mt-8 space-y-4 text-[15px] leading-[21px]">
             <li class="flex gap-3"><span class="mt-2 h-[7px] w-[7px] shrink-0 rounded-full bg-[#2CA961]"></span>Mais fornecedores</li>

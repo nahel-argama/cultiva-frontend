@@ -1,7 +1,7 @@
 <template>
   <section id="problema" class="bg-[#F7F5EF] py-16 min-[720px]:py-20 min-[1080px]:min-h-[900px] min-[1080px]:py-16">
     <div class="mx-auto max-w-[1440px] px-6 min-[720px]:px-8 min-[1080px]:px-[7.22%]">
-      <div class="max-w-[1100px]">
+      <div data-scroll-reveal class="max-w-[1100px]">
         <p class="mb-5 text-xs font-semibold tracking-[1.4px] text-[#287A4E]">O DESAFIO ATUAL</p>
         <h2 class="font-display text-4xl leading-tight font-semibold text-[#287A4E] min-[1080px]:text-5xl">
           O mercado ainda funciona de forma desigual.
@@ -12,8 +12,8 @@
         </div>
       </div>
 
-      <div class="mt-10 grid gap-5 min-[720px]:grid-cols-2 min-[1080px]:mt-14 min-[1080px]:gap-16">
-        <article class="landing-card rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
+      <div data-scroll-reveal-group class="mt-10 grid gap-5 min-[720px]:grid-cols-2 min-[1080px]:mt-14 min-[1080px]:gap-16">
+        <article data-scroll-reveal class="landing-card rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
           <h3 class="font-display text-[25px] leading-8 font-semibold text-[#287A4E]">Pequeno Produtor</h3>
           <div class="mt-8 divide-y divide-[#DFE3D9]">
             <div class="py-4 first:pt-0">
@@ -31,7 +31,7 @@
           </div>
         </article>
 
-        <article class="landing-card rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
+        <article data-scroll-reveal class="landing-card rounded-[20px] border border-[#DFE3D9] bg-white p-6 min-[1080px]:min-h-[444px] min-[1080px]:p-7">
           <h3 class="font-display text-[25px] leading-8 font-semibold text-[#287A4E]">Varejista</h3>
           <div class="mt-8 divide-y divide-[#DFE3D9]">
             <div class="py-4 first:pt-0">
