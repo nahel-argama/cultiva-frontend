@@ -1,27 +1,10 @@
 <template>
   <section class="space-y-6 pb-6">
-    <header class="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-6 sm:flex-row sm:items-end sm:justify-between">
+    <header class="rounded-3xl border border-slate-100 bg-white p-6">
       <div>
         <p class="text-sm font-semibold text-emerald-700">Produtor</p>
         <h2 class="mt-1 text-2xl font-bold text-slate-900">Análise de Produtos</h2>
         <p class="mt-1 text-sm text-slate-500">Veja quais produtos estão na lista de desejos dos varejistas.</p>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        <label class="text-sm text-slate-600">
-          Estado
-          <select v-model="state" :disabled="isLoading" class="mt-1 block rounded-xl border border-slate-200 bg-white px-3 py-2">
-            <option value="">Todos os estados</option>
-            <option v-for="uf in states" :key="uf" :value="uf">{{ uf }}</option>
-          </select>
-        </label>
-        <label class="text-sm text-slate-600">
-          Produtos
-          <select v-model.number="limit" :disabled="isLoading" class="mt-1 block rounded-xl border border-slate-200 bg-white px-3 py-2">
-            <option :value="10">Top 10</option>
-            <option :value="20">Top 20</option>
-            <option :value="50">Top 50</option>
-          </select>
-        </label>
       </div>
     </header>
 
@@ -53,24 +36,51 @@
             @click="activeTab = tab.id"
           >{{ tab.label }}</button>
         </div>
-        <div v-if="!data.results.length" class="p-6 text-sm text-slate-500">Nenhum produto encontrado para este filtro.</div>
-        <div v-else-if="activeTab === 'ranking'" id="ranking-panel" role="tabpanel" aria-labelledby="ranking-tab" class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500">
-              <tr><th class="px-5 py-3">Posição</th><th class="px-5 py-3">Produto</th><th class="px-5 py-3">Desejos</th><th class="px-5 py-3">Participação</th></tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr v-for="item in data.results" :key="item.source_product_id">
-                <td class="px-5 py-4 font-semibold text-slate-500">#{{ item.position }}</td>
-                <td class="px-5 py-4 font-medium text-slate-900">{{ item.product_name }}</td>
-                <td class="px-5 py-4 text-slate-600">{{ item.total }}</td>
-                <td class="px-5 py-4 text-slate-600">{{ item.percentage }}%</td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-if="activeTab === 'ranking'" id="ranking-panel" role="tabpanel" aria-labelledby="ranking-tab" class="space-y-4 p-4 sm:p-6">
+          <div class="flex flex-wrap justify-end gap-3">
+            <label class="text-sm text-slate-600">
+              Estado
+              <select v-model="state" :disabled="isLoading" class="mt-1 block rounded-xl border border-slate-200 bg-white px-3 py-2">
+                <option value="">Todos os estados</option>
+                <option v-for="uf in states" :key="uf" :value="uf">{{ uf }}</option>
+              </select>
+            </label>
+            <label class="text-sm text-slate-600">
+              Produtos
+              <select v-model.number="limit" :disabled="isLoading" class="mt-1 block rounded-xl border border-slate-200 bg-white px-3 py-2">
+                <option :value="10">Top 10</option>
+                <option :value="20">Top 20</option>
+                <option :value="50">Top 50</option>
+              </select>
+            </label>
+          </div>
+          <p v-if="!data.results.length" class="text-sm text-slate-500">Nenhum produto encontrado para este filtro.</p>
+          <div v-else class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-500">
+                <tr><th class="px-5 py-3">Posição</th><th class="px-5 py-3">Produto</th><th class="px-5 py-3">Desejos</th><th class="px-5 py-3">Participação</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr v-for="item in data.results" :key="item.source_product_id">
+                  <td class="px-5 py-4 font-semibold text-slate-500">#{{ item.position }}</td>
+                  <td class="px-5 py-4 font-medium text-slate-900">{{ item.product_name }}</td>
+                  <td class="px-5 py-4 text-slate-600">{{ item.total }}</td>
+                  <td class="px-5 py-4 text-slate-600">{{ item.percentage }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div v-else id="chart-panel" role="tabpanel" aria-labelledby="chart-tab" class="p-4 sm:p-6">
-          <WishlistPieChart :results="data.results" :others="data.others" />
+        <div v-else id="chart-panel" role="tabpanel" aria-labelledby="chart-tab">
+          <div class="border-b border-[#DFE3D9] bg-[#F7F5EF] px-4 py-3 text-sm font-medium text-[#287A4E]">
+            Exibindo o Top 10 de produtos considerando todos os estados.
+          </div>
+          <div class="p-4 sm:p-6">
+            <p v-if="chartError" role="alert" class="text-sm text-red-600">{{ chartError }}</p>
+            <p v-else-if="isChartLoading" role="status" class="text-sm text-slate-500">Carregando gráfico...</p>
+            <p v-else-if="!chartData?.results.length" class="text-sm text-slate-500">Nenhum produto encontrado.</p>
+            <WishlistPieChart v-else :results="chartData.results" />
+          </div>
         </div>
       </div>
     </template>
@@ -87,8 +97,11 @@ const states = ['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG'
 const state = ref('');
 const limit = ref(10);
 const data = ref(null);
+const chartData = ref(null);
 const error = ref('');
+const chartError = ref('');
 const isLoading = ref(false);
+const isChartLoading = ref(false);
 const activeTab = ref('ranking');
 const tabs = [
   { id: 'ranking', label: 'Lista de ranking' },
@@ -111,5 +124,20 @@ async function load() {
 }
 
 watch([state, limit], load);
+watch(activeTab, (tab) => {
+  if (tab === 'chart' && !chartData.value && !isChartLoading.value) loadChart();
+});
 onMounted(load);
+
+async function loadChart() {
+  isChartLoading.value = true;
+  chartError.value = '';
+  try {
+    chartData.value = await getWishlistAnalytics({ limit: 10 });
+  } catch (cause) {
+    chartError.value = cause.message || 'Não foi possível carregar o gráfico.';
+  } finally {
+    isChartLoading.value = false;
+  }
+}
 </script>
