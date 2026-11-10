@@ -37,7 +37,7 @@
           >{{ tab.label }}</button>
         </div>
         <div v-if="activeTab === 'ranking'" id="ranking-panel" role="tabpanel" aria-labelledby="ranking-tab" class="space-y-4 p-4 sm:p-6">
-          <div class="flex flex-wrap justify-end gap-3">
+          <div class="flex flex-wrap justify-start gap-3">
             <label class="text-sm text-slate-600">
               Estado
               <select v-model="state" :disabled="isLoading" class="mt-1 block rounded-xl border border-slate-200 bg-white px-3 py-2">
