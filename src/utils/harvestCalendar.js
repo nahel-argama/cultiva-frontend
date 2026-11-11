@@ -57,22 +57,6 @@ export function getMonthDays(date, forecasts, selectedDate) {
   });
 }
 
-export function monthSeasonRange(startMonth, endMonth, fromDate = new Date()) {
-  let year = fromDate.getFullYear();
-  let start = new Date(year, startMonth - 1, 1);
-  let endYear = endMonth < startMonth ? year + 1 : year;
-  let end = new Date(endYear, endMonth, 0);
-
-  if (start < fromDate || end < fromDate) {
-    year++;
-    start = new Date(year, startMonth - 1, 1);
-    endYear = endMonth < startMonth ? year + 1 : year;
-    end = new Date(endYear, endMonth, 0);
-  }
-
-  return { startDate: toLocalDateString(start), endDate: toLocalDateString(end) };
-}
-
 export function formatCalendarDate(dateString, options = { day: '2-digit', month: 'short' }) {
   return new Intl.DateTimeFormat('pt-BR', options).format(parseLocalDate(dateString));
 }

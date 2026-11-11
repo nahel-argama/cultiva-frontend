@@ -27,12 +27,6 @@ export async function listAllHarvestForecasts(filters = {}) {
   return forecasts;
 }
 
-export async function listHarvestSeasonPeriods(productId) {
-  const params = new URLSearchParams({ source_product_id: String(productId) });
-  const response = await apiRequest(`/harvest-season-periods?${params}`);
-  return response.data ?? [];
-}
-
 export async function createHarvestForecast(data) {
   const response = await apiRequest('/harvest-forecasts', {
     method: 'POST',
