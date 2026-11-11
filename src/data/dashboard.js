@@ -3,6 +3,7 @@ import {
   ArrowPathIcon,
   ChartPieIcon,
   ClipboardDocumentListIcon,
+  CalendarDaysIcon,
   EyeIcon,
   UserCircleIcon,
   TruckIcon,
@@ -16,6 +17,13 @@ export const dashboardProfiles = {
     subtitle: 'Acompanhe estoque, oportunidades e preços sugeridos para vender melhor.',
     navItems: [
       { id: 'meu-estoque', label: 'Meu Estoque', icon: ArchiveBoxIcon },
+      {
+        id: 'calendario-safras',
+        label: 'Calendário de Safras',
+        title: 'Calendário de Safras',
+        description: 'Previsões de colheita dos produtores para planejar compras futuras.',
+        icon: CalendarDaysIcon,
+      },
       { id: 'wishlist-analytics', label: 'Análise de Produtos', icon: ChartPieIcon },
       { id: 'historico-venda', label: 'Histórico de Venda', icon: ArrowPathIcon },
       profileItem,
@@ -26,6 +34,13 @@ export const dashboardProfiles = {
     subtitle: 'Monte listas de desejo, encontre fornecedores e acompanhe compras com facilidade.',
     navItems: [
       { id: 'explorar-ofertas', label: 'Explorar Ofertas', icon: EyeIcon },
+      {
+        id: 'calendario-safras',
+        label: 'Calendário de Safras',
+        title: 'Calendário de Safras',
+        description: 'Consulte previsões de colheita e organize suas próximas compras.',
+        icon: CalendarDaysIcon,
+      },
       { id: 'lista-desejos', label: 'Lista de Desejos', icon: ClipboardDocumentListIcon },
       { id: 'historico-compra', label: 'Histórico de Compra', icon: ArrowPathIcon },
       profileItem,

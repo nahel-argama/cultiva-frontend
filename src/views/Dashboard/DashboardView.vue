@@ -12,8 +12,8 @@
 
     <template #topbar>
       <DashboardTopbar
-        :title="profile.title"
-        :subtitle="profile.subtitle"
+        :title="activeNavItem?.title || profile.title"
+        :subtitle="activeNavItem?.description || profile.subtitle"
         :role-label="roleLabel"
         :user-name="userName"
         @toggle-sidebar="sidebarOpen = !sidebarOpen"
@@ -47,18 +47,21 @@ import ProfileView from '@/components/dashboard/views/ProfileView.vue';
 import DashboardPlaceholderView from '@/components/dashboard/views/DashboardPlaceholderView.vue';
 
 const WishlistAnalyticsView = defineAsyncComponent(() => import('@/components/dashboard/views/WishlistAnalyticsView.vue'));
+const SeasonalCalendarView = defineAsyncComponent(() => import('@/components/dashboard/views/SeasonalCalendarView.vue'));
 
 const auth = useAuth();
 const route = useRoute();
 const dashboardViewRegistry = {
   producer: {
     'meu-estoque': StockView,
+    'calendario-safras': SeasonalCalendarView,
     'historico-venda': SalesHistoryView,
     'wishlist-analytics': WishlistAnalyticsView,
     'meu-perfil': ProfileView,
   },
   retailer: {
     'explorar-ofertas': ExploreOffersView,
+    'calendario-safras': SeasonalCalendarView,
     'lista-desejos': WishlistView,
     'historico-compra': PurchaseHistoryView,
     'meu-perfil': ProfileView,
