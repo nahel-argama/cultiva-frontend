@@ -1,13 +1,14 @@
 <template>
   <section class="mx-auto max-w-[1500px] space-y-5 pb-8">
     <CalendarToolbar
-      :month-label="monthLabel"
       :can-create="isProducer"
-      @today="goToToday"
-      @previous="changeMonth(-1)"
-      @next="changeMonth(1)"
       @create="openCreateForm"
     />
+
+    <div v-if="isProducer" class="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900" role="note">
+      <InformationCircleIcon class="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
+      <p><span class="font-bold">Seu calendário mostra apenas previsões cadastradas por você.</span> Compradores podem consultar previsões de todos os produtores.</p>
+    </div>
 
     <CalendarFilters v-model="productId" />
 
@@ -17,10 +18,19 @@
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2 px-1">
           <p class="text-sm font-bold text-slate-700">{{ monthCountLabel }}</p>
-          <p class="text-xs text-slate-500">Cada previsão mostra o total esperado para o período.</p>
+          <p class="text-xs text-slate-500">Cada previsão mostra o total esperado até o fim do período.</p>
         </div>
         <div class="relative">
-          <CalendarMonthGrid :days="days" @select-day="selectCalendarDay" />
+          <CalendarMonthGrid
+            :days="days"
+            :month-value="monthValue"
+            @select-day="selectCalendarDay"
+            @open-day="openAgenda"
+            @select-month="selectMonth"
+            @today="goToToday"
+            @previous="changeMonth(-1)"
+            @next="changeMonth(1)"
+          />
           <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/65 backdrop-blur-[1px]" role="status">
             <span class="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm">
               <span class="h-4 w-4 animate-spin rounded-full border-2 border-emerald-700/25 border-t-emerald-700"></span>
@@ -30,36 +40,47 @@
         </div>
       </div>
 
-      <aside class="rounded-3xl border border-[#dce4d8] bg-[#f7f8f3] p-4 sm:p-5">
-        <div class="flex items-start justify-between gap-3 border-b border-[#e1e7dd] pb-4">
-          <div>
-            <p class="text-xs font-bold tracking-[0.16em] text-emerald-700 uppercase">Agenda do dia</p>
-            <h3 class="mt-1 text-xl font-black text-slate-900">{{ selectedDayLabel }}</h3>
-          </div>
-          <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">{{ selectedForecasts.length }} {{ selectedForecasts.length === 1 ? 'previsão' : 'previsões' }}</span>
-        </div>
+      <Teleport to="body">
+        <transition name="forecast-modal">
+          <div v-if="isAgendaOpen" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 px-4 py-6 backdrop-blur-sm" @click.self="isAgendaOpen = false" @keydown.esc="isAgendaOpen = false">
+            <section class="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-[#dce4d8] bg-[#f7f8f3] p-4 shadow-2xl sm:p-5" role="dialog" aria-modal="true" aria-labelledby="calendar-agenda-title">
+              <div class="flex items-start justify-between gap-3 border-b border-[#e1e7dd] pb-4">
+                <div>
+                  <p class="text-xs font-bold tracking-[0.16em] text-emerald-700 uppercase">Agenda do dia</p>
+                  <h3 id="calendar-agenda-title" class="mt-1 text-xl font-black text-slate-900">{{ selectedDayLabel }}</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600 shadow-sm">{{ selectedForecasts.length }} {{ selectedForecasts.length === 1 ? 'previsão' : 'previsões' }}</span>
+                  <button type="button" class="rounded-lg p-2 text-slate-500 hover:bg-white hover:text-slate-800" aria-label="Fechar agenda do dia" @click="isAgendaOpen = false">
+                    <XMarkIcon class="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
 
-        <p v-if="isLoading && !forecasts.length" class="py-8 text-center text-sm text-slate-500" role="status">Carregando previsões…</p>
-        <div v-else-if="selectedForecasts.length" class="mt-4 space-y-3">
-          <CalendarForecastCard
-            v-for="forecast in selectedForecasts"
-            :key="forecast.id"
-            :forecast="forecast"
-            :can-manage="canManage(forecast)"
-            :is-favorite="favoriteIds.has(forecast.id)"
-            @toggle-favorite="toggleFavorite"
-            @edit="openEditForm"
-            @remove="openDeleteDialog"
-          />
-        </div>
-        <div v-else class="mt-4 rounded-2xl border border-dashed border-[#d2dbcf] bg-white/60 px-5 py-9 text-center">
-          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm">
-            <SunIcon class="h-6 w-6" />
+              <p v-if="isLoading && !forecasts.length" class="py-8 text-center text-sm text-slate-500" role="status">Carregando previsões…</p>
+              <div v-else-if="selectedForecasts.length" class="mt-4 space-y-3">
+                <CalendarForecastCard
+                  v-for="forecast in selectedForecasts"
+                  :key="forecast.id"
+                  :forecast="forecast"
+                  :can-manage="isProducer"
+                  :is-favorite="favoriteIds.has(forecast.id)"
+                  @toggle-favorite="toggleFavorite"
+                  @edit="openEditForm"
+                  @remove="openDeleteDialog"
+                />
+              </div>
+              <div v-else class="mt-4 rounded-2xl border border-dashed border-[#d2dbcf] bg-white/60 px-5 py-9 text-center">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm">
+                  <SunIcon class="h-6 w-6" />
+                </div>
+                <p class="mt-3 text-sm font-bold text-slate-800">Nenhuma colheita prevista neste dia</p>
+                <p class="mt-1 text-xs leading-5 text-slate-500">Escolha outra data ou ajuste o produto para explorar o calendário.</p>
+              </div>
+            </section>
           </div>
-          <p class="mt-3 text-sm font-bold text-slate-800">Nenhuma colheita prevista neste dia</p>
-          <p class="mt-1 text-xs leading-5 text-slate-500">Escolha outra data ou ajuste o produto para explorar o calendário.</p>
-        </div>
-      </aside>
+        </transition>
+      </Teleport>
     </div>
 
     <ForecastFormModal
@@ -81,7 +102,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { SunIcon } from '@heroicons/vue/24/outline';
+import { InformationCircleIcon, SunIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import AppDialog from '@/components/ui/AppDialog.vue';
 import CalendarFilters from '@/components/dashboard/views/calendar/CalendarFilters.vue';
 import CalendarForecastCard from '@/components/dashboard/views/calendar/CalendarForecastCard.vue';
@@ -100,7 +121,6 @@ import {
   formatCalendarDate,
   getMonthBounds,
   getMonthDays,
-  getMonthLabel,
   parseLocalDate,
   toLocalDateString,
 } from '@/utils/harvestCalendar';
@@ -113,6 +133,7 @@ const selectedDate = ref(toLocalDateString(now));
 const productId = ref('');
 const forecasts = ref([]);
 const isLoading = ref(false);
+const isAgendaOpen = ref(false);
 const error = ref('');
 const isFormOpen = ref(false);
 const editingForecast = ref(null);
@@ -124,8 +145,7 @@ const favoriteIds = ref(new Set());
 let loadSequence = 0;
 
 const isProducer = computed(() => auth.userType.value === 'producer');
-const producerName = computed(() => auth.profileData.value?.profile?.trade_name ?? '');
-const monthLabel = computed(() => getMonthLabel(displayedMonth.value));
+const monthValue = computed(() => `${displayedMonth.value.getFullYear()}-${String(displayedMonth.value.getMonth() + 1).padStart(2, '0')}`);
 const selectedDayLabel = computed(() => formatCalendarDate(selectedDate.value, {
   weekday: 'long', day: 'numeric', month: 'long',
 }));
@@ -179,6 +199,18 @@ function goToToday() {
   selectedDate.value = toLocalDateString(today);
 }
 
+function selectMonth(value) {
+  const match = /^(\d{4})-(\d{2})$/.exec(value);
+  if (!match) return;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  if (month < 1 || month > 12) return;
+
+  displayedMonth.value = new Date(year, month - 1, 1);
+  selectedDate.value = `${value}-01`;
+}
+
 function selectCalendarDay(day) {
   selectedDate.value = day.date;
   if (!day.inCurrentMonth) {
@@ -187,8 +219,9 @@ function selectCalendarDay(day) {
   }
 }
 
-function canManage(forecast) {
-  return isProducer.value && Boolean(producerName.value) && forecast.producer?.name === producerName.value;
+function openAgenda(day) {
+  selectCalendarDay(day);
+  isAgendaOpen.value = true;
 }
 
 function toggleFavorite(forecastId) {

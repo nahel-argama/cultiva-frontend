@@ -1,4 +1,3 @@
-const MONTHS = new Intl.DateTimeFormat('pt-BR', { month: 'long' });
 const WEEKDAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
 export function toLocalDateString(date) {
@@ -19,11 +18,6 @@ export function getMonthBounds(date) {
   return { start: toLocalDateString(start), end: toLocalDateString(end) };
 }
 
-export function getMonthLabel(date) {
-  const month = MONTHS.format(date);
-  return `${month.charAt(0).toLocaleUpperCase('pt-BR')}${month.slice(1)} ${date.getFullYear()}`;
-}
-
 export function getMonthDays(date, forecasts, selectedDate) {
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -31,16 +25,25 @@ export function getMonthDays(date, forecasts, selectedDate) {
   const offset = (firstDay.getDay() + 6) % 7;
   const dayCount = new Date(year, month + 1, 0).getDate();
   const cellCount = Math.ceil((offset + dayCount) / 7) * 7;
+  const firstVisibleDate = new Date(year, month, 1 - offset);
+  const lastVisibleDate = new Date(firstVisibleDate);
+  lastVisibleDate.setDate(lastVisibleDate.getDate() + cellCount - 1);
   const today = toLocalDateString(new Date());
   const eventsByStartDate = new Map();
 
   for (const forecast of forecasts) {
     const start = parseLocalDate(forecast.start_date);
-    const anchor = start < firstDay ? firstDay : start;
-    const key = toLocalDateString(anchor);
-    const events = eventsByStartDate.get(key) ?? [];
-    events.push(forecast);
-    eventsByStartDate.set(key, events);
+    const end = parseLocalDate(forecast.end_date);
+    const current = new Date(start < firstVisibleDate ? firstVisibleDate : start);
+    const last = end > lastVisibleDate ? lastVisibleDate : end;
+
+    while (current <= last) {
+      const key = toLocalDateString(current);
+      const events = eventsByStartDate.get(key) ?? [];
+      events.push(forecast);
+      eventsByStartDate.set(key, events);
+      current.setDate(current.getDate() + 1);
+    }
   }
 
   return Array.from({ length: cellCount }, (_, index) => {

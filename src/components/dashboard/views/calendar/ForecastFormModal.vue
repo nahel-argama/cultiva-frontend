@@ -47,9 +47,9 @@
             </div>
 
             <div>
-              <label for="forecast-quantity" class="mb-2 block text-sm font-bold text-slate-700">Quantidade total estimada (kg)</label>
+              <label for="forecast-quantity" class="mb-2 block text-sm font-bold text-slate-700">Quantidade total prevista até o fim do período (kg)</label>
               <input id="forecast-quantity" v-model.number="form.quantity" type="number" min="1" step="1" required placeholder="Ex.: 250" class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-800 focus:border-emerald-600 focus:outline-none focus:ring-4 focus:ring-emerald-600/10" />
-              <p class="mt-1.5 text-xs text-slate-500">Para um intervalo, informe a quantidade total prevista para todo o período.</p>
+              <p class="mt-1.5 text-xs text-slate-500">Informe o total acumulado que espera colher até a data final da previsão.</p>
             </div>
 
             <p v-if="formError" class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ formError }}</p>

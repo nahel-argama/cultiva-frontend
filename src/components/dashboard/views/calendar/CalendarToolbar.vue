@@ -6,25 +6,12 @@
       </div>
       <div>
         <p class="text-xs font-bold tracking-[0.18em] text-emerald-700 uppercase">Planejamento de safra</p>
-        <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">{{ monthLabel }}</h2>
+        <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Calendário de Safras</h2>
         <p class="mt-1 text-sm text-slate-600">Previsões compartilhadas para planejar o que vem da terra.</p>
       </div>
     </div>
 
     <div class="flex flex-wrap items-center gap-2">
-      <button
-        type="button"
-        class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-700"
-        @click="$emit('today')"
-      >Hoje</button>
-      <div class="flex items-center rounded-xl border border-slate-200 bg-white p-1" aria-label="Navegar pelos meses">
-        <button type="button" class="rounded-lg p-2 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700" aria-label="Mês anterior" @click="$emit('previous')">
-          <ChevronLeftIcon class="h-5 w-5" />
-        </button>
-        <button type="button" class="rounded-lg p-2 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700" aria-label="Próximo mês" @click="$emit('next')">
-          <ChevronRightIcon class="h-5 w-5" />
-        </button>
-      </div>
       <button
         v-if="canCreate"
         type="button"
@@ -39,12 +26,11 @@
 </template>
 
 <script setup>
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '@heroicons/vue/24/outline';
+import { CalendarDaysIcon, PlusIcon } from '@heroicons/vue/24/outline';
 
 defineProps({
-  monthLabel: { type: String, required: true },
   canCreate: { type: Boolean, default: false },
 });
 
-defineEmits(['today', 'previous', 'next', 'create']);
+defineEmits(['create']);
 </script>

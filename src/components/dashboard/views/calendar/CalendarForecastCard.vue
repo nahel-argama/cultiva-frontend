@@ -49,7 +49,7 @@ const props = defineProps({
 
 defineEmits(['toggle-favorite', 'edit', 'remove']);
 
-const quantityLabel = computed(() => `${new Intl.NumberFormat('pt-BR').format(props.forecast.quantity)} kg previstos`);
+const quantityLabel = computed(() => `${new Intl.NumberFormat('pt-BR').format(props.forecast.quantity)} kg previstos até o fim do período`);
 const dateLabel = computed(() => {
   const start = formatCalendarDate(props.forecast.start_date);
   const end = formatCalendarDate(props.forecast.end_date);
