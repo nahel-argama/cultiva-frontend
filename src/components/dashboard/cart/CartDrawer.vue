@@ -37,9 +37,9 @@
             >
               <div class="flex items-start justify-between gap-3">
                 <div>
-                  <p class="text-xs font-bold tracking-[0.22em] text-emerald-600 uppercase">
-                    Produtor
-                  </p>
+                  <button type="button" class="text-xs font-bold tracking-[0.22em] text-emerald-600 uppercase underline underline-offset-4" @click="openSuppliers(order)">
+                    Ver fornecedores
+                  </button>
                   <h3 class="mt-1 text-base font-black text-slate-900">
                     {{ getProducerLabel(order) }}
                   </h3>
@@ -114,7 +114,7 @@
                 </div>
 
                 <div class="flex items-center justify-between text-sm text-slate-500">
-                  <p>Taxa da Plataforma (não aplicada)</p>
+                  <p>Taxa da Plataforma (5%)</p>
                   <p>R$ {{ formatMoney(getOrderFee(order)) }}</p>
                 </div>
 
@@ -139,6 +139,14 @@
         </div>
       </aside>
     </div>
+    <AppDialog v-model="suppliersOpen" title="Fornecedores" confirm-label="Fechar" :show-cancel="false" @confirm="suppliersOpen = false">
+      <div class="max-h-80 space-y-3 overflow-y-auto">
+        <div v-for="item in supplierItems" :key="item.id" class="rounded-xl bg-slate-50 p-3">
+          <p class="text-sm font-bold text-slate-900">{{ item.name }}</p>
+          <p class="mt-1 text-sm text-slate-600">{{ item.supplier }}</p>
+        </div>
+      </div>
+    </AppDialog>
   </Teleport>
 </template>
 
@@ -147,6 +155,8 @@ import { computed, ref } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { useCartStore } from '@/stores/cart';
 import { useToast } from '@/composables/useToast';
+import AppDialog from '@/components/ui/AppDialog.vue';
+import { getProductById } from '@/services/product';
 
 defineProps({
   modelValue: {
@@ -160,8 +170,23 @@ const emit = defineEmits(['update:modelValue', 'checkout-order']);
 const cartStore = useCartStore();
 const toast = useToast();
 const loadingMap = ref({});
+const suppliersOpen = ref(false);
+const supplierItems = ref([]);
 
 const orders = computed(() => cartStore.pendingOrdersList);
+
+async function openSuppliers(order) {
+  supplierItems.value = getOrderItems(order).map((item) => ({ id: item.id, name: getItemName(item), supplier: 'Carregando...' }));
+  suppliersOpen.value = true;
+  await Promise.all(supplierItems.value.map(async (item) => {
+    try {
+      const offer = await getProductById(item.id);
+      item.supplier = offer.producer_name || 'Fornecedor indisponível';
+    } catch {
+      item.supplier = 'Fornecedor indisponível';
+    }
+  }));
+}
 
 function closeDrawer() {
   emit('update:modelValue', false);
@@ -205,11 +230,10 @@ function getOrderSubtotal(order) {
 }
 
 function getOrderFee(order) {
-  const apiFee = toNumber(order?.fee_value);
-  if (apiFee > 0) {
-    return apiFee;
-  }
-  return 0;
+  return getOrderItems(order).reduce((sum, item) => {
+    const subtotalCents = Math.round(toNumber(item.unit_price) * 100) * Number(item.quantity);
+    return sum + Math.round(subtotalCents * 0.05);
+  }, 0) / 100;
 }
 
 function getOrderTotal(order) {
