@@ -65,8 +65,6 @@
                   :key="forecast.id"
                   :forecast="forecast"
                   :can-manage="isProducer"
-                  :is-favorite="favoriteIds.has(forecast.id)"
-                  @toggle-favorite="toggleFavorite"
                   @edit="openEditForm"
                   @remove="openDeleteDialog"
                 />
@@ -144,7 +142,6 @@ const isSaving = ref(false);
 const isDeleteDialogOpen = ref(false);
 const deletingForecast = ref(null);
 const isDeleting = ref(false);
-const favoriteIds = ref(new Set());
 let loadSequence = 0;
 
 const isProducer = computed(() => auth.userType.value === 'producer');
@@ -243,13 +240,6 @@ function selectCalendarDay(day) {
 function openAgenda(day) {
   selectCalendarDay(day);
   isAgendaOpen.value = true;
-}
-
-function toggleFavorite(forecastId) {
-  const nextFavorites = new Set(favoriteIds.value);
-  if (nextFavorites.has(forecastId)) nextFavorites.delete(forecastId);
-  else nextFavorites.add(forecastId);
-  favoriteIds.value = nextFavorites;
 }
 
 function openCreateForm() {
