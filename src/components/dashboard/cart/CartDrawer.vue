@@ -37,12 +37,12 @@
             >
               <div class="flex items-start justify-between gap-3">
                 <div>
-                  <button type="button" class="text-xs font-bold tracking-[0.22em] text-emerald-600 uppercase underline underline-offset-4" @click="openSuppliers(order)">
-                    Ver fornecedores
-                  </button>
-                  <h3 class="mt-1 text-base font-black text-slate-900">
-                    {{ getProducerLabel(order) }}
-                  </h3>
+                  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h3 class="text-base font-black text-slate-900">{{ getProducerLabel(order) }}</h3>
+                    <button type="button" class="text-xs font-bold tracking-wide text-emerald-600 uppercase underline underline-offset-4" @click="openSuppliers(order)">
+                      Ver fornecedores
+                    </button>
+                  </div>
                   <p v-if="!String(order.id).startsWith('draft-')" class="mt-1 text-xs text-slate-500">
                     Pedido #{{ order.id }}
                   </p>
@@ -131,7 +131,7 @@
                   :disabled="getOrderItems(order).length === 0"
                   @click="$emit('checkout-order', order.id)"
                 >
-                  Finalizar pedido com {{ getProducerLabel(order) }}
+                  Finalizar pedido
                 </button>
               </div>
             </section>
@@ -141,10 +141,21 @@
     </div>
     <AppDialog v-model="suppliersOpen" title="Fornecedores" confirm-label="Fechar" :show-cancel="false" @confirm="suppliersOpen = false">
       <div class="max-h-80 space-y-3 overflow-y-auto">
-        <div v-for="item in supplierItems" :key="item.id" class="rounded-xl bg-slate-50 p-3">
-          <p class="text-sm font-bold text-slate-900">{{ item.name }}</p>
-          <p class="mt-1 text-sm text-slate-600">{{ item.supplier }}</p>
-        </div>
+        <details v-for="item in supplierItems" :key="item.id" name="cart-suppliers" class="group rounded-xl border border-slate-200 bg-[#F7F5EF]">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-4 focus-visible:outline-2 focus-visible:outline-emerald-600">
+            <span class="min-w-0">
+              <span class="block text-sm font-bold text-slate-900">{{ item.name }}</span>
+              <span class="mt-1 block text-sm text-slate-600">{{ item.supplier }}</span>
+            </span>
+            <span aria-hidden="true" class="text-xl text-emerald-700 group-open:rotate-45">+</span>
+          </summary>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-slate-200 px-4 py-3 text-sm">
+            <div><dt class="text-xs text-slate-500">Distância</dt><dd class="mt-1 font-semibold text-slate-800">{{ item.distance == null ? 'Indisponível' : `${item.distance.toLocaleString('pt-BR')} km` }}</dd></div>
+            <div><dt class="text-xs text-slate-500">Preço no carrinho</dt><dd class="mt-1 font-semibold text-slate-800">R$ {{ formatMoney(item.unitPrice) }}/kg</dd></div>
+            <div><dt class="text-xs text-slate-500">Quantidade no carrinho</dt><dd class="mt-1 font-semibold text-slate-800">{{ item.quantity }} kg</dd></div>
+            <div><dt class="text-xs text-slate-500">Estoque disponível</dt><dd class="mt-1 font-semibold text-slate-800">{{ item.available == null ? 'Indisponível' : `${item.available} kg` }}</dd></div>
+          </dl>
+        </details>
       </div>
     </AppDialog>
   </Teleport>
@@ -176,12 +187,14 @@ const supplierItems = ref([]);
 const orders = computed(() => cartStore.pendingOrdersList);
 
 async function openSuppliers(order) {
-  supplierItems.value = getOrderItems(order).map((item) => ({ id: item.id, name: getItemName(item), supplier: 'Carregando...' }));
+  supplierItems.value = getOrderItems(order).map((item) => ({ id: item.id, name: getItemName(item), supplier: 'Carregando...', unitPrice: item.unit_price, quantity: item.quantity, distance: null, available: null }));
   suppliersOpen.value = true;
   await Promise.all(supplierItems.value.map(async (item) => {
     try {
       const offer = await getProductById(item.id);
       item.supplier = offer.producer_name || 'Fornecedor indisponível';
+      item.distance = offer.distance_km;
+      item.available = offer.available_quantity;
     } catch {
       item.supplier = 'Fornecedor indisponível';
     }
