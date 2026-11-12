@@ -50,9 +50,10 @@
           <span
             v-for="forecast in day.events.slice(0, 2)"
             :key="forecast.id"
-            class="block truncate rounded-md bg-[#e8f2e7] px-1.5 py-1 text-[10px] font-semibold leading-tight text-emerald-900 sm:px-2 sm:text-xs"
+            class="flex items-center gap-1 rounded-md px-1.5 py-1 text-[10px] font-semibold leading-tight sm:px-2 sm:text-xs"
+            :class="wishlistProductIds.has(String(forecast.product?.source_product_id)) ? 'bg-rose-100 text-rose-800' : 'bg-[#e8f2e7] text-emerald-900'"
             :title="eventLabel(forecast)"
-          >{{ eventLabel(forecast) }}</span>
+          ><span class="min-w-0 flex-1 truncate">{{ eventLabel(forecast) }}</span><span v-if="wishlistProductIds.has(String(forecast.product?.source_product_id))" aria-label="Na sua lista de desejos">♥</span></span>
           <span v-if="day.events.length > 2" class="block px-1.5 text-[10px] font-bold text-emerald-700 sm:px-2">+{{ day.events.length - 2 }} mais</span>
         </span>
       </button>
@@ -67,6 +68,7 @@ import { getWeekdayLabels } from '@/utils/harvestCalendar';
 
 const props = defineProps({
   days: { type: Array, default: () => [] },
+  wishlistProductIds: { type: Set, default: () => new Set() },
   monthLabel: { type: String, required: true },
   monthValue: { type: String, required: true },
 });

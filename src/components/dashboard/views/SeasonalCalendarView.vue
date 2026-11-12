@@ -23,6 +23,7 @@
         <div class="relative">
           <CalendarMonthGrid
             :days="days"
+            :wishlist-product-ids="wishlistProductIds"
             :month-value="monthValue"
             @select-day="selectCalendarDay"
             @open-day="openAgenda"
@@ -111,6 +112,7 @@ import CalendarToolbar from '@/components/dashboard/views/calendar/CalendarToolb
 import ForecastFormModal from '@/components/dashboard/views/calendar/ForecastFormModal.vue';
 import { useAuth } from '@/composables/useAuth';
 import { useToast } from '@/composables/useToast';
+import { listWishlistItems } from '@/services/wishlist';
 import {
   createHarvestForecast,
   deleteHarvestForecast as removeHarvestForecast,
@@ -132,6 +134,7 @@ const displayedMonth = ref(new Date(now.getFullYear(), now.getMonth(), 1));
 const selectedDate = ref(toLocalDateString(now));
 const productId = ref('');
 const forecasts = ref([]);
+const wishlistProductIds = ref(new Set());
 const isLoading = ref(false);
 const isAgendaOpen = ref(false);
 const error = ref('');
@@ -162,6 +165,24 @@ const deleteMessage = computed(() => deletingForecast.value
   : 'Esta previsão será removida do calendário.');
 
 watch([displayedMonth, productId], loadForecasts, { immediate: true });
+
+if (!isProducer.value) {
+  loadWishlist();
+}
+
+async function loadWishlist() {
+  try {
+    const firstPage = await listWishlistItems({ perPage: 100 });
+    const items = [...firstPage.results];
+    for (let page = 2; page <= firstPage.lastPage; page++) {
+      const nextPage = await listWishlistItems({ perPage: 100, page });
+      items.push(...nextPage.results);
+    }
+    wishlistProductIds.value = new Set(items.map((item) => String(item.source_product_id)));
+  } catch (requestError) {
+    toast.error(requestError?.message || 'Não foi possível carregar sua lista de desejos.', 'Erro ao carregar lista');
+  }
+}
 
 async function loadForecasts() {
   const requestId = ++loadSequence;
