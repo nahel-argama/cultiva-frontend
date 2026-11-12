@@ -86,13 +86,11 @@ import {
 } from '@heroicons/vue/24/outline';
 import { useAuth } from '@/composables/useAuth';
 import { useCartStore } from '@/stores/cart';
-import { useToast } from '@/composables/useToast';
 import CartDrawer from '@/components/dashboard/cart/CartDrawer.vue';
 
 const router = useRouter();
 const auth = useAuth();
 const cartStore = useCartStore();
-const toast = useToast();
 const showMenu = ref(false);
 const menuRef = ref(null);
 const isCartOpen = ref(false);
@@ -138,14 +136,9 @@ async function toggleCart() {
   }
 }
 
-async function goToOrderCheckout(orderId) {
-  try {
-    const completedCount = await cartStore.checkoutOrder(orderId);
-    toast.success(`${completedCount} compra(s) registrada(s).`, 'Pedido enviado');
-    isCartOpen.value = false;
-  } catch (error) {
-    toast.error(error?.message || 'Não foi possível finalizar o pedido.', 'Falha na compra');
-  }
+function goToOrderCheckout() {
+  isCartOpen.value = false;
+  router.push('/checkout');
 }
 
 function onDocumentClick(event) {

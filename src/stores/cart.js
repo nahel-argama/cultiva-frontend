@@ -82,14 +82,19 @@ export function useCartStore() {
     saveCart();
     },
 
-    async checkoutOrder() {
+    async checkoutOrder(offers) {
     const cart = loadCart();
     let completedCount = 0;
     for (const item of [...cart]) {
+      try {
       await apiRequest(`/offers/${item.offer_id}/purchase`, {
         method: 'POST',
-        body: JSON.stringify({ quantity: Number(item.quantity) }),
+        body: JSON.stringify({ quantity: Number(item.quantity), expected_unit_price: offers.find((offer) => offer.id === item.offer_id).unit_price }),
       });
+      } catch (error) {
+        error.completedCount = completedCount;
+        throw error;
+      }
       state.purchaseRevision++;
       state.carts[userKey()] = loadCart().filter((entry) => Number(entry.offer_id) !== Number(item.offer_id));
       saveCart();
