@@ -14,7 +14,7 @@
 
     <p v-if="error" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ error }}</p>
 
-    <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.8fr)]">
+    <div class="grid items-start gap-5">
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2 px-1">
           <p class="text-sm font-bold text-slate-700">{{ monthCountLabel }}</p>
