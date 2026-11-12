@@ -1,11 +1,15 @@
 <template>
   <article
-    class="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg"
+    class="group flex h-full flex-col overflow-hidden rounded-3xl border bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+    :class="item.is_in_wishlist ? 'border-rose-300 ring-2 ring-rose-100' : 'border-white/70 hover:border-emerald-200'"
   >
     <div class="flex flex-1 flex-col p-5">
       <div class="flex items-start justify-between gap-4">
         <div class="min-w-0">
-          <p class="text-xs font-bold tracking-[0.26em] text-emerald-600 uppercase">Oferta</p>
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="text-xs font-bold tracking-[0.26em] text-emerald-600 uppercase">Oferta</p>
+            <span v-if="item.is_in_wishlist" class="inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">♥ Na sua lista de desejos</span>
+          </div>
           <h3 class="mt-2 truncate text-xl font-black tracking-tight text-slate-900">
             {{ capitalize(item.name || '') }}
           </h3>
