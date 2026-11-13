@@ -155,13 +155,21 @@ test('pagination controls use metadata and reject navigation while loading', asy
 
 test('offer quantity uses authoritative stock and rejects fractional purchases', async () => {
   const OfferCard = (await server.ssrLoadModule('/src/components/dashboard/views/offers/OfferCard.vue')).default;
+  const events = [];
   const card = await setup(OfferCard, {
     item: { id: 7, name: 'Tomate', total_quantity: 100, reserved_quantity: 0, available_quantity: 4 },
     cartQuantity: 0, isAdding: false,
-  });
+  }, (...event) => events.push(event));
   assert.equal(card.availableQuantity.value, 4);
+  card.openQuantityModal();
+  assert.equal(card.isQuantityOpen.value, true);
   card.selectedQuantity.value = 1.5;
   assert.equal(card.canAddToCart.value, false);
   card.normalizeQuantity();
   assert.equal(card.selectedQuantity.value, 1);
+  card.selectedQuantity.value = 8;
+  card.handleAddToCart();
+  assert.equal(card.isQuantityOpen.value, false);
+  assert.equal(events[0][0], 'add-to-cart');
+  assert.equal(events[0][1].quantity, 4);
 });
