@@ -3,42 +3,12 @@
     class="group flex h-full flex-col overflow-hidden rounded-3xl border bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
     :class="item.is_in_wishlist ? 'border-rose-300 ring-2 ring-rose-100' : 'border-white/70 hover:border-emerald-200'"
   >
-    <div class="flex flex-1 flex-col p-5">
-      <div class="flex items-start justify-between gap-4">
-        <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-2">
-            <p class="text-xs font-bold tracking-[0.26em] text-emerald-600 uppercase">Oferta</p>
-            <span v-if="item.is_in_wishlist" class="inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-800">♥ Na sua lista de desejos</span>
-          </div>
-          <h3 class="mt-2 truncate text-xl font-black tracking-tight text-slate-900">
-            {{ capitalize(item.name || '') }}
-          </h3>
-          <p v-if="item.producer_name" class="mt-1.5 text-sm text-slate-500">
-            Vendido por: <span class="font-semibold text-slate-700">{{ item.producer_name }}</span>
-          </p>
-          <p
-            v-if="item.distance_km !== null && item.distance_km !== undefined"
-            class="mt-1 truncate text-sm text-slate-500"
-          >
-            A {{ item.distance_km }} km de distância
-          </p>
-        </div>
-        <button
-          v-if="item.description"
-          type="button"
-          class="rounded-2xl border border-slate-200 bg-white p-2.5 text-slate-500 transition hover:border-emerald-200 hover:text-emerald-600 focus:outline-none"
-          :aria-label="`Ver descrição de ${capitalize(item.name || '')}`"
-          @click="openDescriptionModal"
-        >
-          <InformationCircleIcon class="h-5 w-5" />
-        </button>
-      </div>
-
+    <div class="flex flex-1 flex-col p-3">
       <div
         v-if="imageUrl"
-        class="mt-5 overflow-hidden rounded-[22px] border border-slate-200 bg-slate-50"
+        class="overflow-hidden rounded-xl bg-slate-50"
       >
-        <div class="aspect-[4/3] w-full">
+        <div class="aspect-[2/1] w-full">
           <AppSecureImage
             :src="imageUrl"
             :alt="capitalize(item.name || '')"
@@ -46,47 +16,71 @@
           />
         </div>
       </div>
-      <div v-else class="mt-5 rounded-[22px] border border-dashed border-slate-200 bg-slate-50 p-4">
+      <div v-else class="rounded-xl bg-slate-50">
         <div
-          class="flex aspect-[4/3] items-center justify-center rounded-[18px] border border-slate-200 bg-white text-slate-300"
+          class="flex aspect-[2/1] items-center justify-center text-slate-300"
         >
           <div class="text-center">
             <div
-              class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-300"
+              class="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-slate-300"
             >
               <PhotoIcon class="h-7 w-7" />
             </div>
-            <p class="mt-3 text-sm font-semibold text-slate-500">Sem foto</p>
+            <p class="mt-1 text-xs font-semibold text-slate-500">Sem foto</p>
           </div>
         </div>
       </div>
 
-      <div class="mt-auto grid gap-3 pt-5 text-sm sm:grid-cols-2">
-        <div class="rounded-2xl bg-slate-50 px-4 py-3">
-          <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">Preço / kg</p>
+
+      <div class="mt-3 flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="text-[10px] font-bold tracking-[0.18em] text-emerald-600 uppercase">Oferta</p>
+            <span v-if="item.is_in_wishlist" class="inline-flex rounded-full bg-rose-100 px-2 py-1 text-[10px] font-bold text-rose-800">♥ Na sua lista de desejos</span>
+          </div>
+          <h3 class="mt-1 truncate text-lg font-bold tracking-tight text-slate-900">
+            {{ capitalize(item.name || '') }}
+          </h3>
+          <p v-if="item.producer_name" class="mt-0.5 text-xs text-slate-500">
+            Vendido por: <span class="font-semibold text-slate-700">{{ item.producer_name }}</span>
+          </p>
+          <p
+            v-if="item.distance_km !== null && item.distance_km !== undefined"
+            class="mt-0.5 truncate text-xs text-slate-500"
+          >
+            A {{ item.distance_km }} km de distância
+          </p>
+        </div>
+        <button
+          v-if="item.description"
+          type="button"
+          class="rounded-xl border border-slate-200 bg-white p-2 text-slate-500 transition hover:border-emerald-200 hover:text-emerald-600 focus:outline-none"
+          :aria-label="`Ver descrição de ${capitalize(item.name || '')}`"
+          @click="openDescriptionModal"
+        >
+          <InformationCircleIcon class="h-5 w-5" />
+        </button>
+      </div>
+
+      <div class="mt-auto grid grid-cols-2 gap-2 pt-3 text-sm">
+        <div class="rounded-xl bg-slate-50 px-3 py-2">
+          <p class="text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">Preço / kg</p>
           <p class="mt-1 text-base font-bold text-slate-900">R$ {{ item.price }}</p>
         </div>
 
-        <div class="rounded-2xl bg-slate-50 px-4 py-3">
-          <p class="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">Qtd. Disp.</p>
+        <div class="rounded-xl bg-slate-50 px-3 py-2">
+          <p class="text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">Qtd. Disp.</p>
           <p class="mt-1 text-base font-bold text-slate-900">
             {{ availableQuantity }} kg
           </p>
         </div>
       </div>
 
-      <div class="mt-5 space-y-3">
-        <div
-          v-if="cartQuantity > 0"
-          class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700"
-        >
-          No carrinho: {{ cartQuantity }} kg
-        </div>
-
-        <div class="flex items-center gap-2">
+      <div class="mt-3 space-y-2">
+        <div class="flex items-center gap-1">
           <button
             type="button"
-            class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            class="rounded-xl border border-slate-200 bg-white px-2 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="isAdding || selectedQuantity <= 1 || availableQuantity <= 0"
             @click="decrementQuantity"
           >
@@ -101,7 +95,7 @@
             min="1"
             step="1"
             :max="availableQuantity > 0 ? availableQuantity : 1"
-            class="w-20 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-sm font-bold text-slate-900 transition outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+            class="w-14 rounded-xl border border-slate-200 bg-white px-1 py-2 text-center text-sm font-bold text-slate-900 transition outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="isAdding || availableQuantity <= 0"
             @blur="normalizeQuantity"
           />
@@ -110,17 +104,23 @@
 
           <button
             type="button"
-            class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            class="rounded-xl border border-slate-200 bg-white px-2 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="isAdding || availableQuantity <= 0 || selectedQuantity >= availableQuantity"
             @click="incrementQuantity"
           >
             +
           </button>
+          <div
+            v-if="cartQuantity > 0"
+            class="ml-auto whitespace-nowrap rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700"
+          >
+            No carrinho: {{ cartQuantity }} kg
+          </div>
         </div>
 
         <button
           type="button"
-          class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+          class="w-full rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           :disabled="!canAddToCart"
           @click="handleAddToCart"
         >
@@ -171,7 +171,7 @@ const emit = defineEmits(['add-to-cart']);
 const selectedQuantity = ref(1);
 
 const imageUrl = computed(() => {
-  return props.item.images?.[0]?.image || null;
+  return props.item.image_url || null;
 });
 
 const availableQuantity = computed(() => Number(props.item.available_quantity));

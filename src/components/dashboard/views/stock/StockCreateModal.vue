@@ -147,6 +147,19 @@
               />
             </div>
 
+            <div>
+              <label for="offer-image" class="mb-2 block text-sm font-bold text-slate-700">Foto da oferta (opcional)</label>
+              <input
+                id="offer-image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                class="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 file:mr-3 file:rounded-xl file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:font-bold file:text-emerald-700"
+                @change="handleImageChange"
+              />
+              <p class="mt-1.5 text-xs text-slate-500">JPG, PNG ou WebP, até 5 MB.</p>
+              <img v-if="imagePreview" :src="imagePreview" alt="Prévia da foto da oferta" class="mt-3 h-40 w-full rounded-2xl object-cover" />
+            </div>
+
             <p v-if="submitError" class="mt-2 text-sm text-red-600" role="alert">
               {{ submitError }}
             </p>
@@ -176,7 +189,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { onUnmounted, reactive, ref, watch } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import AppSelect from '@/components/ui/AppSelect.vue';
 import { useProductSearch } from '@/composables/useProductSearch';
@@ -199,6 +212,7 @@ const INITIAL_FORM = {
   total_quantity: '',
   harvest_date: '',
   lifespan_days: '',
+  image: null,
 };
 const form = reactive({ ...INITIAL_FORM });
 
@@ -206,11 +220,26 @@ const submitError = ref('');
 const isSubmitting = ref(false);
 const suggestedPrice = ref(null);
 const isLoadingPrice = ref(false);
+const imagePreview = ref('');
+
+function clearImagePreview() {
+  if (imagePreview.value) URL.revokeObjectURL(imagePreview.value);
+  imagePreview.value = '';
+}
+
+function handleImageChange(event) {
+  clearImagePreview();
+  form.image = event.target.files?.[0] ?? null;
+  if (form.image) imagePreview.value = URL.createObjectURL(form.image);
+}
+
+onUnmounted(clearImagePreview);
 
 const categoryOptions = ref([]);
 
 
 function resetForm() {
+  clearImagePreview();
   Object.assign(form, INITIAL_FORM);
   submitError.value = '';
   suggestedPrice.value = null;
@@ -288,6 +317,7 @@ async function handleSubmit() {
       total_quantity: form.total_quantity,
       harvest_date: form.harvest_date,
       lifespan_days: form.lifespan_days,
+      image: form.image,
     };
 
     const item = await createProduct(data);

@@ -29,17 +29,16 @@ export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PE
 }
 
 export async function createProduct(data) {
-  const response = await apiRequest('/offers', {
-    method: 'POST',
-    body: JSON.stringify({
-      source_product_id: String(data.source_product_id ?? data.external_id ?? ''),
-      category_id: Number(data.category_id ?? data.category),
-      unit_price: String(data.unit_price ?? data.price),
-      total_quantity: Number(data.total_quantity),
-      harvest_date: data.harvest_date,
-      lifespan_days: Number(data.lifespan_days),
-    }),
-  });
+  const body = new FormData();
+  body.append('source_product_id', String(data.source_product_id ?? data.external_id ?? ''));
+  body.append('category_id', String(data.category_id ?? data.category));
+  body.append('unit_price', String(data.unit_price ?? data.price));
+  body.append('total_quantity', String(data.total_quantity));
+  body.append('harvest_date', data.harvest_date);
+  body.append('lifespan_days', String(data.lifespan_days));
+  if (data.image) body.append('image', data.image);
+
+  const response = await apiRequest('/offers', { method: 'POST', body });
   return normalizeOffer(response?.data ?? response);
 }
 

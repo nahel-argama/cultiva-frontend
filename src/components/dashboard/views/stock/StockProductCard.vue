@@ -112,7 +112,7 @@ const isDialogOpen = ref(false);
 const isDescriptionOpen = ref(false);
 
 const imageUrl = computed(() => {
-  return props.item.images?.[0]?.image || null;
+  return props.item.image_url || null;
 });
 
 const formattedDescription = computed(() => {
