@@ -16,11 +16,12 @@ function normalizeOffer(offer) {
   };
 }
 
-export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PER_PAGE, wishlist, maxDistanceKm, sort } = {}) {
+export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PER_PAGE, wishlist, maxDistanceKm, sort, sourceProductId } = {}) {
   const params = new URLSearchParams({ search: search.trim(), page: String(page), per_page: String(perPage) });
   if (wishlist) params.set('wishlist', wishlist);
   if (maxDistanceKm) params.set('max_distance_km', maxDistanceKm);
   if (sort) params.set('sort', sort);
+  if (sourceProductId != null) params.set('source_product_id', sourceProductId);
 
   const response = await apiRequest(`/offers?${params}`);
   return {
@@ -30,6 +31,12 @@ export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PE
     perPage: response.meta.per_page,
     lastPage: response.meta.last_page,
   };
+}
+
+export async function compareOffers(firstId, secondId, signal) {
+  const params = new URLSearchParams({ first_offer_id: firstId, second_offer_id: secondId });
+  const { data } = await apiRequest(`/offers/compare?${params}`, { signal });
+  return { ...data, offers: data.offers.map(normalizeOffer) };
 }
 
 export async function createProduct(data) {

@@ -8,6 +8,9 @@ export async function apiRequest(path, options = {}) {
   const normalizedPath = path.startsWith('/v1/') ? path : `/v1${path.startsWith('/') ? path : `/${path}`}`;
 
   headers.set('Accept', 'application/json');
+  if (/^https:\/\/[^/]+\.ngrok-free\.dev(?:\/|$)/i.test(API_BASE_URL)) {
+    headers.set('ngrok-skip-browser-warning', '1');
+  }
   if (options.body && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }

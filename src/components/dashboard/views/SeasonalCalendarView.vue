@@ -25,6 +25,7 @@
             :days="days"
             :wishlist-product-ids="wishlistProductIds"
             :month-value="monthValue"
+            :month-label="monthLabel"
             @select-day="selectCalendarDay"
             @open-day="openAgenda"
             @select-month="selectMonth"
@@ -146,6 +147,9 @@ let loadSequence = 0;
 
 const isProducer = computed(() => auth.userType.value === 'producer');
 const monthValue = computed(() => `${displayedMonth.value.getFullYear()}-${String(displayedMonth.value.getMonth() + 1).padStart(2, '0')}`);
+const monthLabel = computed(() => formatCalendarDate(
+  toLocalDateString(displayedMonth.value), { month: 'long', year: 'numeric' },
+));
 const selectedDayLabel = computed(() => formatCalendarDate(selectedDate.value, {
   weekday: 'long', day: 'numeric', month: 'long',
 }));

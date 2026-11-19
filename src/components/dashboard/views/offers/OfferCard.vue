@@ -1,7 +1,11 @@
 <template>
   <article
     class="group relative flex h-full flex-col overflow-hidden rounded-3xl border bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
-    :class="item.is_in_wishlist ? 'border-2 border-rose-300 ring-2 ring-rose-100' : 'border-slate-200 hover:border-emerald-200'"
+    :class="{
+      'comparison-selected': isSelected,
+      'border-2 border-rose-300 ring-2 ring-rose-100': !isSelected && item.is_in_wishlist,
+      'border-slate-200 hover:border-emerald-200': !isSelected && !item.is_in_wishlist,
+    }"
   >
     <div v-if="cartQuantity > 0" class="absolute right-5 top-5 z-10">
       <div class="group/cart relative" tabindex="0" :aria-label="`${cartQuantity} kg no carrinho`">
@@ -83,14 +87,25 @@
         </div>
       </div>
 
-      <div class="mt-3 space-y-2">
+      <div class="mt-3 flex gap-2">
         <button
           type="button"
-          class="w-full rounded-xl bg-emerald-600 px-4 py-2.5 text-base font-extrabold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+          class="min-w-0 flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-base font-extrabold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           :disabled="isAdding || availableQuantity <= 0"
           @click="openQuantityModal"
         >
           {{ isAdding ? 'Adicionando...' : 'Adicionar ao Carrinho' }}
+        </button>
+        <button
+          type="button"
+          aria-label="Comparar oferta"
+          :title="isSelected ? 'Remover da comparação' : 'Comparar oferta'"
+          :aria-pressed="isSelected"
+          :disabled="compareDisabled"
+          class="grid min-h-11 w-11 shrink-0 place-items-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-emerald-600 aria-pressed:bg-emerald-100 aria-pressed:text-emerald-800 disabled:opacity-40"
+          @click="$emit('toggle-compare', item)"
+        >
+          <ArrowsRightLeftIcon class="size-5" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -134,7 +149,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { PhotoIcon, InformationCircleIcon, MapPinIcon, CubeIcon } from '@heroicons/vue/24/outline';
+import { ArrowsRightLeftIcon, PhotoIcon, InformationCircleIcon, MapPinIcon, CubeIcon } from '@heroicons/vue/24/outline';
 import AppSecureImage from '@/components/ui/AppSecureImage.vue';
 import AppDialog from '@/components/ui/AppDialog.vue';
 import { capitalize } from '@/utils/string';
@@ -148,13 +163,15 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  isSelected: Boolean,
+  compareDisabled: Boolean,
   isAdding: {
     type: Boolean,
     default: false,
   },
 });
 
-const emit = defineEmits(['add-to-cart']);
+const emit = defineEmits(['add-to-cart', 'toggle-compare']);
 const selectedQuantity = ref(1);
 
 const imageUrl = computed(() => {
@@ -228,3 +245,29 @@ watch(availableQuantity, (nextAvailable) => {
   }
 });
 </script>
+
+<style scoped>
+@property --offer-comparison-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.comparison-selected {
+  border: 4px solid transparent;
+  background:
+    linear-gradient(white, white) padding-box,
+    conic-gradient(from var(--offer-comparison-border-angle, 0deg), #34d399, #6ee7b7 30%, #d1fae5 48%, #a3e635 64%, #34d399 85%) border-box;
+  box-shadow: 0 0 0 3px rgb(52 211 153 / 20%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .comparison-selected {
+    animation: comparison-border-spin 3s linear infinite;
+  }
+
+  @keyframes comparison-border-spin {
+    to { --offer-comparison-border-angle: 1turn; }
+  }
+}
+</style>

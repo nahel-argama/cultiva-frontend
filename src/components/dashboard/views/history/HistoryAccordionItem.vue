@@ -15,7 +15,7 @@
           </p>
           <span
             class="rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.22em] uppercase"
-            :class="statusClasses[item.statusTone || 'emerald']"
+            :class="statusClasses[deliveryStatusTones[item.rawOrder?.delivery_status?.code] ?? item.statusTone ?? 'emerald']"
           >
             {{ item.status }}
           </span>
@@ -161,6 +161,15 @@ defineProps({
 });
 
 defineEmits(['toggle', 'download-invoice']);
+
+const deliveryStatusTones = {
+  pending: 'amber',
+  assigned: 'blue',
+  in_transit: 'blue',
+  delivered: 'emerald',
+  failed: 'red',
+  cancelled: 'red',
+};
 
 const statusClasses = {
   emerald: 'bg-emerald-50 text-emerald-700',

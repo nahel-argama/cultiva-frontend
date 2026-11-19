@@ -87,7 +87,7 @@ function buildHistoryItem(purchase) {
     partyEmail: party.email || '',
     partyPhone: party.phone || '',
     date: formatDate(purchase.created_at),
-    status: 'Registrada',
+    status: purchase.delivery_status?.label || 'Registrada',
     statusTone: 'emerald',
     total: formatMoney(purchase.total_price),
     items: [{

@@ -7,6 +7,9 @@
         :item="item"
         :cart-quantity="Number(cartQuantities[item.id] || 0)"
         :is-adding="Number(addingProductId) === Number(item.id)"
+        :is-selected="selectedIds.includes(item.id)"
+        :compare-disabled="selectedIds.length === 2 && !selectedIds.includes(item.id)"
+        @toggle-compare="$emit('toggle-compare', $event)"
         @add-to-cart="$emit('add-to-cart', $event)"
       />
     </div>
@@ -30,6 +33,7 @@
 import OfferCard from './OfferCard.vue';
 
 defineProps({
+  selectedIds: { type: Array, default: () => [] },
   items: {
     type: Array,
     default: () => [],
@@ -52,5 +56,5 @@ defineProps({
   },
 });
 
-defineEmits(['add-to-cart']);
+defineEmits(['add-to-cart', 'toggle-compare']);
 </script>
