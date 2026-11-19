@@ -1,6 +1,17 @@
 <template>
   <section class="space-y-6 pb-6">
-    <OffersHeader :search="searchTerm" @update-search="onSearch" />
+    <OffersHeader
+      :search="searchTerm"
+      :filters="filters"
+      :can-reset="hasFilters"
+      @update-search="onSearch"
+      @update-filter="updateFilter"
+      @reset="resetFilters"
+    />
+
+    <p v-if="!isLoading && !error" role="status" class="px-1 text-sm font-medium text-slate-600">
+      {{ totalItems.toLocaleString('pt-BR') }} {{ totalItems === 1 ? 'oferta encontrada' : 'ofertas encontradas' }}
+    </p>
 
     <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
     <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
@@ -10,7 +21,7 @@
       :cart-quantities="cartQuantitiesByProduct"
       :adding-product-id="addingProductId"
       empty-title="Nenhuma oferta encontrada"
-      empty-description="Não há ofertas disponíveis no momento."
+      :empty-description="hasFilters ? 'Altere ou limpe os filtros para ver mais ofertas.' : 'Não há ofertas disponíveis no momento.'"
       @add-to-cart="handleAddToCart"
     />
 
@@ -35,8 +46,19 @@ import { useCartStore } from '@/stores/cart';
 import { useToast } from '@/composables/useToast';
 import { capitalize } from '@/utils/string';
 
+const defaultFilters = { wishlist: 'all', maxDistanceKm: '', sort: 'nearest' };
+const filters = ref({ ...defaultFilters });
 const searchTerm = ref('');
-const { items: offers, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listProducts({ ...params, search: searchTerm.value }), 12);
+const hasFilters = computed(() =>
+  Boolean(searchTerm.value.trim()) ||
+  Object.keys(defaultFilters).some((key) => filters.value[key] !== defaultFilters[key]),
+);
+
+const { items: offers, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listProducts({
+  ...params,
+  ...filters.value,
+  search: searchTerm.value,
+}), 12);
 const addingProductId = ref(null);
 
 const cartStore = useCartStore();
@@ -121,6 +143,19 @@ function onSearch(value) {
   searchTerm.value = value;
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => load(1), 400);
+}
+
+function updateFilter(key, value) {
+  clearTimeout(searchTimer);
+  filters.value[key] = value;
+  load(1);
+}
+
+function resetFilters() {
+  clearTimeout(searchTimer);
+  searchTerm.value = '';
+  filters.value = { ...defaultFilters };
+  load(1);
 }
 
 onUnmounted(() => clearTimeout(searchTimer));

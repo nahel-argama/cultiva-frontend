@@ -16,8 +16,12 @@ function normalizeOffer(offer) {
   };
 }
 
-export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PER_PAGE } = {}) {
+export async function listProducts({ search = '', page = 1, perPage = DEFAULT_PER_PAGE, wishlist, maxDistanceKm, sort } = {}) {
   const params = new URLSearchParams({ search: search.trim(), page: String(page), per_page: String(perPage) });
+  if (wishlist) params.set('wishlist', wishlist);
+  if (maxDistanceKm) params.set('max_distance_km', maxDistanceKm);
+  if (sort) params.set('sort', sort);
+
   const response = await apiRequest(`/offers?${params}`);
   return {
     results: response.data.map(normalizeOffer),
