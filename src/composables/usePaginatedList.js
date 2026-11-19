@@ -7,10 +7,12 @@ export function usePaginatedList(fetchPage, perPage) {
   const itemsPerPage = ref(perPage);
   const isLoading = ref(false);
   const error = ref('');
+  const showSkeleton = ref(false);
   let requestSequence = 0;
 
-  async function load(page = currentPage.value) {
+  async function load(page = currentPage.value, { keepResults = false } = {}) {
     const requestId = ++requestSequence;
+    showSkeleton.value = !keepResults || showSkeleton.value || page !== currentPage.value || !items.value.length;
     currentPage.value = page;
     isLoading.value = true;
     error.value = '';
@@ -29,9 +31,12 @@ export function usePaginatedList(fetchPage, perPage) {
       currentPage.value = 1;
       error.value = cause?.message || 'Não foi possível carregar os dados.';
     } finally {
-      if (requestId === requestSequence) isLoading.value = false;
+      if (requestId === requestSequence) {
+        isLoading.value = false;
+        showSkeleton.value = false;
+      }
     }
   }
 
-  return { items, totalItems, currentPage, itemsPerPage, isLoading, error, load };
+  return { items, totalItems, currentPage, itemsPerPage, isLoading, showSkeleton, error, load };
 }

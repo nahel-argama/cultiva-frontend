@@ -8,7 +8,7 @@
     />
 
     <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
-    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
+    <ResultsSkeleton v-else-if="showSkeleton" cards />
     <WishlistGrid v-else :items="wishlistItems" @remove="removeProduct" />
 
     <AppPagination
@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+import ResultsSkeleton from './ResultsSkeleton.vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 import WishlistCreateModal from './wishlist/WishlistCreateModal.vue';
 import WishlistGrid from './wishlist/WishlistGrid.vue';
@@ -43,7 +44,7 @@ const toast = useToast();
 const searchTerm = ref('');
 const isCreateModalOpen = ref(false);
 
-const { items: wishlistItems, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList(
+const { items: wishlistItems, totalItems, currentPage, itemsPerPage, isLoading, showSkeleton, error, load } = usePaginatedList(
   (params) => listWishlistItems({ ...params, productName: searchTerm.value }),
   12,
 );
@@ -66,13 +67,13 @@ onUnmounted(() => clearTimeout(searchTimer));
 
 /** Recarrega a página mantendo busca, ordenação e totais do backend. */
 async function onItemCreated(newItem) {
-  await load(currentPage.value);
+  await load(currentPage.value, { keepResults: true });
 
   const productName = newItem.product_name ? capitalize(newItem.product_name) : 'Produto';
   toast.success(`"${productName}" foi adicionado com sucesso!`, 'Adicionado');
 }
 
 function removeProduct() {
-  return load(currentPage.value);
+  return load(currentPage.value, { keepResults: true });
 }
 </script>

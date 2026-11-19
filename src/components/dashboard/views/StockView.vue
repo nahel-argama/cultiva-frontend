@@ -8,7 +8,7 @@
     />
 
     <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
-    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
+    <ResultsSkeleton v-else-if="showSkeleton" cards />
     <StockGrid v-else :items="products" @updated="refreshStock" />
 
     <AppPagination
@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+import ResultsSkeleton from './ResultsSkeleton.vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 import StockCreateModal from './stock/StockCreateModal.vue';
 import StockGrid from './stock/StockGrid.vue';
@@ -38,19 +39,19 @@ const toast = useToast();
 
 const isCreateModalOpen = ref(false);
 const searchTerm = ref('');
-const { items: products, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listProducts({ ...params, search: searchTerm.value }), 12);
+const { items: products, totalItems, currentPage, itemsPerPage, isLoading, showSkeleton, error, load } = usePaginatedList((params) => listProducts({ ...params, search: searchTerm.value }), 12);
 
 onMounted(() => load(1));
 
 async function onProductCreated(newProduct) {
-  await load(currentPage.value);
+  await load(currentPage.value, { keepResults: true });
 
   const name = newProduct.name ? capitalize(newProduct.name) : 'Produto';
   toast.success(`"${name}" foi adicionado ao estoque com sucesso!`, 'Adicionado');
 }
 
 function refreshStock() {
-  return load(currentPage.value);
+  return load(currentPage.value, { keepResults: true });
 }
 
 let searchTimer = null;

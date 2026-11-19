@@ -16,7 +16,12 @@
         </button>
       </div>
 
-      <p v-if="loading" role="status" class="py-8 text-sm text-slate-600">Comparando ofertas…</p>
+      <div v-if="loading" role="status" aria-label="Comparando ofertas" class="grid grid-cols-2 gap-3 py-4">
+        <div v-for="column in 2" :key="column" class="space-y-4 rounded-xl border border-slate-200 p-4">
+          <AppSkeleton class="h-5 w-3/4" />
+          <AppSkeleton v-for="row in 4" :key="row" class="h-4 w-2/3" />
+        </div>
+      </div>
       <p v-else-if="error" role="alert" class="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-800">{{ error }}</p>
       <template v-else-if="comparison">
         <p class="mt-4 text-sm text-slate-600">
@@ -66,6 +71,7 @@
 </template>
 
 <script setup>
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
 import { onMounted, ref } from 'vue';
 import { CheckCircleIcon, StarIcon, XMarkIcon } from '@heroicons/vue/24/solid';
 import AppSecureImage from '@/components/ui/AppSecureImage.vue';

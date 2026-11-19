@@ -173,3 +173,26 @@ test('offer quantity uses authoritative stock and rejects fractional purchases',
   assert.equal(events[0][0], 'add-to-cart');
   assert.equal(events[0][1].quantity, 4);
 });
+
+test('pagination shows skeleton for new results and keeps visible data during a refresh', async () => {
+  const { usePaginatedList } = await server.ssrLoadModule('/src/composables/usePaginatedList.js');
+  const list = usePaginatedList(async ({ page }) => ({
+    results: [{ id: page }], count: 24, page, perPage: 12, lastPage: 2,
+  }), 12);
+
+  const first = list.load(1);
+  assert.equal(list.showSkeleton.value, true);
+  await first;
+
+  const refresh = list.load(1, { keepResults: true });
+  assert.equal(list.isLoading.value, true);
+  assert.equal(list.showSkeleton.value, false);
+  assert.deepEqual(list.items.value, [{ id: 1 }]);
+  await refresh;
+
+  const next = list.load(2);
+  assert.equal(list.showSkeleton.value, true);
+  await next;
+  assert.equal(list.showSkeleton.value, false);
+  assert.deepEqual(list.items.value, [{ id: 2 }]);
+});

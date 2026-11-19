@@ -2,6 +2,7 @@
   <DashboardShell :sidebar-open="sidebarOpen" @close-sidebar="sidebarOpen = false">
     <template #sidebar>
       <DashboardSidebar
+        v-if="!isResolvingProfile"
         :profile="profile"
         :active-item-id="activeItemId"
         :is-verified="isVerified"
@@ -12,6 +13,7 @@
 
     <template #topbar>
       <DashboardTopbar
+        v-if="!isResolvingProfile"
         :title="activeNavItem?.title || profile.title"
         :subtitle="activeNavItem?.description || profile.subtitle"
         :role-label="roleLabel"
@@ -20,7 +22,9 @@
       />
     </template>
 
+    <ResultsSkeleton v-if="isResolvingProfile" cards />
     <component
+      v-else
       :is="activeViewComponent"
       :role-label="roleLabel"
       :eyebrow="roleLabel"
@@ -31,6 +35,7 @@
 </template>
 
 <script setup>
+import ResultsSkeleton from '@/components/dashboard/views/ResultsSkeleton.vue';
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
@@ -46,10 +51,11 @@ import SalesHistoryView from '@/components/dashboard/views/SalesHistoryView.vue'
 import ProfileView from '@/components/dashboard/views/ProfileView.vue';
 import DashboardPlaceholderView from '@/components/dashboard/views/DashboardPlaceholderView.vue';
 
-const WishlistAnalyticsView = defineAsyncComponent(() => import('@/components/dashboard/views/WishlistAnalyticsView.vue'));
-const SeasonalCalendarView = defineAsyncComponent(() => import('@/components/dashboard/views/SeasonalCalendarView.vue'));
+const WishlistAnalyticsView = defineAsyncComponent({ loadingComponent: ResultsSkeleton, delay: 0, loader: () => import('@/components/dashboard/views/WishlistAnalyticsView.vue') });
+const SeasonalCalendarView = defineAsyncComponent({ loadingComponent: ResultsSkeleton, delay: 0, loader: () => import('@/components/dashboard/views/SeasonalCalendarView.vue') });
 
 const auth = useAuth();
+const isResolvingProfile = ref(!auth.profileData.value?.profile_type);
 const route = useRoute();
 const dashboardViewRegistry = {
   producer: {
@@ -121,13 +127,15 @@ watch(
 );
 
 onMounted(() => {
-  auth.refreshProfile().catch(() => {});
+  auth.refreshProfile().catch(() => {}).finally(() => {
+    isResolvingProfile.value = false;
+  });
 });
 
 watch(
-  () => route.query.tab,
-  (tabFromQuery) => {
-    if (typeof tabFromQuery !== 'string') {
+  [() => route.query.tab, isResolvingProfile],
+  ([tabFromQuery, resolving]) => {
+    if (resolving || typeof tabFromQuery !== 'string') {
       return;
     }
 

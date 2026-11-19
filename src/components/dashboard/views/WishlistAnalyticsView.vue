@@ -8,17 +8,17 @@
       </div>
     </header>
 
-    <p v-if="error" role="alert" class="rounded-2xl bg-red-50 p-4 text-sm text-red-700">{{ error }}</p>
-    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando análise...</p>
-    <template v-else-if="data">
+    <template v-if="isLoading || data || error">
       <div class="grid gap-4 sm:grid-cols-2">
         <article class="rounded-2xl border border-slate-100 bg-white p-5">
           <p class="text-sm text-slate-500">Desejos registrados</p>
-          <p class="mt-2 text-3xl font-bold text-slate-900">{{ data.total_items }}</p>
+          <AppSkeleton v-if="isLoading" class="mt-2 h-9 w-20" />
+          <p v-else-if="data" class="mt-2 text-3xl font-bold text-slate-900">{{ data.total_items }}</p>
         </article>
         <article class="rounded-2xl border border-slate-100 bg-white p-5">
           <p class="text-sm text-slate-500">Produtos no ranking</p>
-          <p class="mt-2 text-3xl font-bold text-slate-900">{{ data.results.length }}</p>
+          <AppSkeleton v-if="isLoading" class="mt-2 h-9 w-20" />
+          <p v-else-if="data" class="mt-2 text-3xl font-bold text-slate-900">{{ data.results.length }}</p>
         </article>
       </div>
 
@@ -54,7 +54,13 @@
               </select>
             </label>
           </div>
-          <p v-if="!data.results.length" class="text-sm text-slate-500">Nenhum produto encontrado para este filtro.</p>
+          <p v-if="error" role="alert" class="rounded-2xl bg-red-50 p-4 text-sm text-red-700">{{ error }}</p>
+          <div v-else-if="isLoading" role="status" aria-label="Carregando ranking" class="space-y-4">
+            <div v-for="row in 5" :key="row" class="grid grid-cols-[1fr_2fr_1fr_1fr] gap-4 border-b border-slate-100 px-3 pb-4">
+              <AppSkeleton v-for="column in 4" :key="column" class="h-4 w-3/4" />
+            </div>
+          </div>
+          <p v-else-if="!data?.results.length" class="text-sm text-slate-500">Nenhum produto encontrado para este filtro.</p>
           <div v-else class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-slate-50 text-slate-500">
@@ -77,7 +83,7 @@
           </div>
           <div class="p-4 sm:p-6">
             <p v-if="chartError" role="alert" class="text-sm text-red-600">{{ chartError }}</p>
-            <p v-else-if="isChartLoading" role="status" class="text-sm text-slate-500">Carregando gráfico...</p>
+            <ChartSkeleton v-else-if="isChartLoading" />
             <p v-else-if="!chartData?.results.length" class="text-sm text-slate-500">Nenhum produto encontrado.</p>
             <WishlistPieChart v-else :results="chartData.results" />
           </div>
@@ -88,10 +94,16 @@
 </template>
 
 <script setup>
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
+import ChartSkeleton from './wishlist/ChartSkeleton.vue';
 import { defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { getWishlistAnalytics } from '@/services/wishlistAnalytics';
 
-const WishlistPieChart = defineAsyncComponent(() => import('./wishlist/WishlistPieChart.vue'));
+const WishlistPieChart = defineAsyncComponent({
+  loader: () => import('./wishlist/WishlistPieChart.vue'),
+  loadingComponent: ChartSkeleton,
+  delay: 0,
+});
 
 const states = ['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO'];
 const state = ref('');
@@ -100,7 +112,7 @@ const data = ref(null);
 const chartData = ref(null);
 const error = ref('');
 const chartError = ref('');
-const isLoading = ref(false);
+const isLoading = ref(true);
 const isChartLoading = ref(false);
 const activeTab = ref('ranking');
 const tabs = [

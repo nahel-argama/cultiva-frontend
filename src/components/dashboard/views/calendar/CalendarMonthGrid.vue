@@ -27,7 +27,7 @@
       <div v-for="weekday in weekdays" :key="weekday" class="py-3 text-center text-[11px] font-bold tracking-wide text-slate-500 uppercase">{{ weekday }}</div>
     </div>
 
-    <div class="grid grid-cols-7">
+    <div class="grid grid-cols-7" :aria-busy="loading">
       <button
         v-for="day in days"
         :key="day.date"
@@ -37,7 +37,7 @@
           !day.inCurrentMonth ? 'bg-slate-50/60 text-slate-300' : 'text-slate-700',
           day.isSelected ? 'z-10 bg-emerald-50 ring-2 ring-inset ring-emerald-600' : '',
         ]"
-        :aria-label="`${day.number}, ${day.events.length} previsões`"
+        :aria-label="`${day.number}${loading ? '' : `, ${day.events.length} previsões`}`"
         :aria-pressed="day.isSelected"
         @click="$emit('select-day', day)"
         @dblclick="$emit('open-day', day)"
@@ -46,7 +46,8 @@
           class="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 text-xs font-bold"
           :class="day.isToday ? 'bg-emerald-700 text-white' : day.isSelected ? 'text-emerald-800' : ''"
         >{{ day.number }}</span>
-        <span v-if="day.events.length" class="mt-1 block space-y-1">
+        <AppSkeleton v-if="loading && day.inCurrentMonth" class="mt-1 h-5 w-full" />
+        <span v-else-if="day.events.length" class="mt-1 block space-y-1">
           <span
             v-for="forecast in day.events.slice(0, 2)"
             :key="forecast.id"
@@ -62,11 +63,13 @@
 </template>
 
 <script setup>
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
 import { computed } from 'vue';
 import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 import { getWeekdayLabels } from '@/utils/harvestCalendar';
 
 const props = defineProps({
+  loading: Boolean,
   days: { type: Array, default: () => [] },
   wishlistProductIds: { type: Set, default: () => new Set() },
   monthLabel: { type: String, required: true },

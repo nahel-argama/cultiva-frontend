@@ -9,7 +9,7 @@
     />
 
     <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
-    <p v-else-if="isLoading" role="status" class="text-sm text-slate-500">Carregando...</p>
+    <ResultsSkeleton v-else-if="showSkeleton" />
     <HistoryList
       v-else
       :items="purchases"
@@ -30,6 +30,7 @@
 </template>
 
 <script setup>
+import ResultsSkeleton from './ResultsSkeleton.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import HistoryList from './history/HistoryList.vue';
 import HistoryToolbar from './history/HistoryToolbar.vue';
@@ -40,7 +41,7 @@ import { formatDocument, formatPostalCode } from '@/utils/formatters';
 import { downloadInvoice } from '@/utils/invoiceGenerator';
 
 const searchTerm = ref('');
-const { items: orders, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listOrders({ ...params, search: searchTerm.value }), 10);
+const { items: orders, totalItems, currentPage, itemsPerPage, isLoading, showSkeleton, error, load } = usePaginatedList((params) => listOrders({ ...params, search: searchTerm.value }), 10);
 const purchases = computed(() => orders.value.map(buildHistoryItem));
 
 function formatDate(value) {

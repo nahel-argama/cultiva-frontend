@@ -36,7 +36,7 @@
         :banner-src="BANNER_IMAGE"
       />
 
-      <article class="rounded-[28px] border border-slate-200/85 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:p-7">
+      <article :aria-busy="isCheckingVerification" class="rounded-[28px] border border-slate-200/85 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:p-7">
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h3 class="text-xl font-black tracking-tight text-slate-900">Verificação de documento</h3>
@@ -44,7 +44,9 @@
               A validação do seu documento libera o acesso completo à plataforma.
             </p>
           </div>
+          <AppSkeleton v-if="isCheckingVerification" class="h-8 w-24 rounded-full" />
           <span
+            v-else
             class="rounded-full px-3 py-1.5 text-sm font-bold"
             :class="isVerified ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'"
           >
@@ -88,6 +90,7 @@
 </template>
 
 <script setup>
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 
@@ -118,6 +121,7 @@ const toast = useToast();
 const selectedDocument = ref(null);
 const isUploading = ref(false);
 const isVerificationPending = ref(false);
+const isCheckingVerification = ref(false);
 const isVerified = computed(() => auth.profileData.value?.user?.is_verified === true);
 let verificationGeneration = 0;
 let verificationTimer;
@@ -155,6 +159,7 @@ function stopVerificationPolling() {
   clearTimeout(verificationTimer);
   verificationTimer = undefined;
   isVerificationPending.value = false;
+  isCheckingVerification.value = false;
 }
 
 function startVerificationPolling() {
@@ -170,6 +175,7 @@ function startVerificationPolling() {
     if (generation !== verificationGeneration) return;
 
     let response;
+    isCheckingVerification.value = true;
     try {
       response = await getDocumentVerificationStatus();
     } catch (statusError) {
@@ -181,6 +187,8 @@ function startVerificationPolling() {
       }
       scheduleCheck(5_000);
       return;
+    } finally {
+      if (generation === verificationGeneration) isCheckingVerification.value = false;
     }
 
     if (generation !== verificationGeneration) return;

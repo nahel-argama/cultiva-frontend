@@ -16,9 +16,11 @@
         v-if="isOpen && (visibleOptions.length || loading)"
         class="absolute z-40 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-slate-200 bg-white py-1 shadow-lg"
       >
-        <p v-if="loading" class="px-3 py-2 text-sm text-slate-500">Carregando...</p>
+        <div v-if="loading" role="status" aria-label="Carregando opções" class="space-y-3 px-3 py-2">
+          <AppSkeleton v-for="row in 3" :key="row" class="h-4 w-3/4" />
+        </div>
         <button
-          v-for="option in visibleOptions"
+          v-for="option in (loading ? [] : visibleOptions)"
           :key="option[valueKey] ?? option.value ?? option.id"
           type="button"
           class="block w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-emerald-50"
@@ -26,26 +28,32 @@
         >{{ option[labelKey] ?? option.label ?? option.name ?? option[valueKey] ?? option.id }}</button>
       </div>
     </div>
-    <select
-      v-else
-      :value="modelValue"
-      class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
-      :class="{ 'border-red-500': error }"
-      :disabled="loading"
-      @change="onNativeChange"
-    >
-      <option value="" disabled>{{ loading ? 'Carregando...' : placeholder }}</option>
-      <option
-        v-for="option in options"
-        :key="option[valueKey] ?? option.value ?? option.id"
-        :value="option[valueKey] ?? option.value ?? option.id"
-      >{{ option[labelKey] ?? option.label ?? option.name }}</option>
-    </select>
+    <div v-else class="relative">
+      <select
+        :value="modelValue"
+        class="w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-green-800 focus:outline-none"
+        :class="{ 'border-red-500': error, 'opacity-0': loading }"
+        :disabled="loading"
+        :aria-busy="loading"
+        @change="onNativeChange"
+      >
+        <option value="" disabled>{{ placeholder }}</option>
+        <option
+          v-for="option in options"
+          :key="option[valueKey] ?? option.value ?? option.id"
+          :value="option[valueKey] ?? option.value ?? option.id"
+        >{{ option[labelKey] ?? option.label ?? option.name }}</option>
+      </select>
+      <div v-if="loading" role="status" aria-label="Carregando opções" class="pointer-events-none absolute inset-0">
+        <AppSkeleton class="h-full w-full rounded-lg" />
+      </div>
+    </div>
     <p v-if="error" class="mt-1 text-sm text-red-600">{{ error }}</p>
   </div>
 </template>
 
 <script setup>
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps({

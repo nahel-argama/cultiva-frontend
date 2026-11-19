@@ -17,12 +17,14 @@
     <div class="grid items-start gap-5">
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2 px-1">
-          <p class="text-sm font-bold text-slate-700">{{ monthCountLabel }}</p>
+          <AppSkeleton v-if="isLoading" class="h-5 w-32" />
+          <p v-else class="text-sm font-bold text-slate-700">{{ monthCountLabel }}</p>
           <p class="text-xs text-slate-500">Cada previsão mostra o total esperado até o fim do período.</p>
         </div>
         <div class="relative">
           <CalendarMonthGrid
             :days="days"
+            :loading="isLoading"
             :wishlist-product-ids="wishlistProductIds"
             :month-value="monthValue"
             :month-label="monthLabel"
@@ -33,12 +35,6 @@
             @previous="changeMonth(-1)"
             @next="changeMonth(1)"
           />
-          <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/65 backdrop-blur-[1px]" role="status">
-            <span class="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm">
-              <span class="h-4 w-4 animate-spin rounded-full border-2 border-emerald-700/25 border-t-emerald-700"></span>
-              Atualizando calendário…
-            </span>
-          </div>
         </div>
       </div>
 
@@ -59,7 +55,7 @@
                 </div>
               </div>
 
-              <p v-if="isLoading && !forecasts.length" class="py-8 text-center text-sm text-slate-500" role="status">Carregando previsões…</p>
+              <ResultsSkeleton v-if="isLoading" />
               <div v-else-if="selectedForecasts.length" class="mt-4 space-y-3">
                 <CalendarForecastCard
                   v-for="forecast in selectedForecasts"
@@ -70,6 +66,7 @@
                   @remove="openDeleteDialog"
                 />
               </div>
+              <p v-else-if="error" role="alert" class="mt-4 text-sm text-red-700">{{ error }}</p>
               <div v-else class="mt-4 rounded-2xl border border-dashed border-[#d2dbcf] bg-white/60 px-5 py-9 text-center">
                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm">
                   <SunIcon class="h-6 w-6" />
@@ -101,6 +98,8 @@
 </template>
 
 <script setup>
+import ResultsSkeleton from './ResultsSkeleton.vue';
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
 import { computed, ref, watch } from 'vue';
 import { InformationCircleIcon, SunIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import AppDialog from '@/components/ui/AppDialog.vue';

@@ -14,12 +14,11 @@
           <p class="mt-1 text-sm leading-6 text-slate-600">Confira as ofertas e os valores atualizados antes de confirmar suas compras.</p>
         </div>
 
-        <p v-if="loading" role="status" class="mt-8 text-sm text-slate-600">Atualizando ofertas...</p>
-        <section v-else-if="!items.length" class="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+        <section v-if="!loading && !items.length" class="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
           <h2 class="font-bold">Seu carrinho está vazio</h2>
           <RouterLink to="/dashboard" class="mt-3 inline-block text-sm font-semibold text-emerald-700 underline">Explorar ofertas</RouterLink>
         </section>
-        <div v-else class="mt-5 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_310px]">
+        <div v-else :aria-busy="loading" class="mt-5 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_310px]">
           <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
             <div class="flex items-baseline justify-between gap-4 border-b border-slate-100 pb-4">
               <div><p class="text-xs font-bold tracking-[0.2em] text-emerald-700 uppercase">Suas escolhas</p><h2 class="mt-1 text-base font-black">Ofertas selecionadas</h2></div>
@@ -27,8 +26,9 @@
             </div>
             <div class="divide-y divide-slate-100">
               <article v-for="item in items" :key="item.id" class="flex flex-wrap items-start justify-between gap-3 py-4">
-                <div class="min-w-0"><h3 class="text-sm font-bold">{{ item.name }}</h3><p class="mt-1 text-xs text-slate-500">Fornecedor: {{ item.supplier }}</p><p class="mt-2 text-xs text-slate-600">{{ item.quantity }} kg <span class="mx-1 text-slate-300">·</span> {{ money(item.price) }} / kg</p><p v-if="item.error" class="mt-2 text-sm font-semibold text-rose-700">{{ item.error }}</p></div>
-                <p class="text-sm font-bold text-slate-900">{{ money(item.price * item.quantity) }}</p>
+                <div class="min-w-0"><h3 class="text-sm font-bold">{{ item.name }}</h3><AppSkeleton v-if="loading" class="mt-1 h-4 w-28" /><p v-else class="mt-1 text-xs text-slate-500">Fornecedor: {{ item.supplier }}</p><p class="mt-2 text-xs text-slate-600">{{ item.quantity }} kg <template v-if="!loading"><span class="mx-1 text-slate-300">·</span> {{ money(item.price) }} / kg</template></p><p v-if="item.error" class="mt-2 text-sm font-semibold text-rose-700">{{ item.error }}</p></div>
+                <AppSkeleton v-if="loading" class="h-5 w-16" />
+                <p v-else class="text-sm font-bold text-slate-900">{{ money(item.price * item.quantity) }}</p>
               </article>
             </div>
             <p class="rounded-xl bg-[#F7F5EF] px-4 py-3 text-xs leading-5 text-slate-600">Cada oferta é registrada como uma compra separada. Se alguma não puder ser concluída, as demais permanecem no carrinho.</p>
@@ -37,13 +37,14 @@
           <aside class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-20">
             <p class="text-xs font-bold tracking-[0.2em] text-emerald-700 uppercase">Resumo</p>
             <h2 class="mt-1 text-base font-black">Total do pedido</h2>
-            <dl class="mt-4 space-y-3 text-sm text-slate-600">
+            <AppSkeleton v-if="loading" class="my-4 h-24 w-full" />
+            <dl v-else class="mt-4 space-y-3 text-sm text-slate-600">
               <div class="flex justify-between gap-4"><dt>Subtotal dos produtos</dt><dd>{{ money(subtotal / 100) }}</dd></div>
               <div class="flex justify-between gap-4"><dt>Taxa da plataforma (5%)</dt><dd>{{ money(fee / 100) }}</dd></div>
               <div class="flex justify-between gap-4 border-t border-slate-100 pt-4 text-base font-black text-emerald-800"><dt>Total</dt><dd>{{ money((subtotal + fee) / 100) }}</dd></div>
             </dl>
             <p v-if="error" role="alert" class="mt-5 rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{{ error }}</p>
-            <button type="button" class="mt-5 w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-300" :disabled="submitting || completed > 0 || items.some((item) => item.error)" @click="confirmOrder">{{ submitting ? 'Registrando compras...' : 'Confirmar compras' }}</button>
+            <button type="button" class="mt-5 w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-300" :disabled="loading || submitting || completed > 0 || items.some((item) => item.error)" @click="confirmOrder">{{ submitting ? 'Registrando compras...' : 'Confirmar compras' }}</button>
           </aside>
         </div>
     </div>
@@ -67,6 +68,7 @@
 </template>
 
 <script setup>
+import AppSkeleton from '@/components/ui/AppSkeleton.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { CheckIcon } from '@heroicons/vue/24/outline';
@@ -87,10 +89,16 @@ const money = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', cur
 async function loadOffers() {
   loading.value = true;
   const cartItems = cart.pendingOrdersList.flatMap((order) => order.items);
-  items.value = await Promise.all(cartItems.map(async (item) => {
-    const result = { id: Number(item.offer_id), name: item.product_data?.name || 'Produto', supplier: 'Fornecedor indisponível', quantity: Number(item.quantity), price: Number(item.unit_price), error: '' };
+  items.value = cartItems.map((item) => ({
+    id: Number(item.offer_id),
+    name: item.product_data?.name || 'Produto',
+    quantity: Number(item.quantity),
+    price: Number(item.unit_price),
+  }));
+  items.value = await Promise.all(items.value.map(async (item) => {
+    const result = { ...item, supplier: 'Fornecedor indisponível', error: '' };
     try {
-      const offer = await getProductById(item.offer_id);
+      const offer = await getProductById(item.id);
       result.name = offer.name || result.name;
       result.supplier = offer.producer_name || result.supplier;
       result.price = Number(offer.unit_price);
@@ -104,7 +112,7 @@ async function loadOffers() {
 }
 
 async function confirmOrder() {
-  if (submitting.value || !items.value.length || items.value.some((item) => item.error)) return;
+  if (loading.value || submitting.value || !items.value.length || items.value.some((item) => item.error)) return;
   submitting.value = true;
   error.value = '';
   try {

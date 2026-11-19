@@ -9,12 +9,12 @@
       @reset="resetFilters"
     />
 
-    <p v-if="!error && (!isLoading || visibleOffers.length)" :class="{ invisible: isLoading }" role="status" class="px-1 text-sm font-medium text-slate-600">
+    <p v-if="!error && !showSkeleton" role="status" class="px-1 text-sm font-medium text-slate-600">
       {{ totalItems.toLocaleString('pt-BR') }} {{ totalItems === 1 ? 'oferta encontrada' : 'ofertas encontradas' }}
     </p>
 
     <p v-if="error" role="alert" class="text-sm text-red-600">{{ error }}</p>
-    <p v-else-if="isLoading && !visibleOffers.length" role="status" class="text-sm text-slate-500">Carregando...</p>
+    <ResultsSkeleton v-else-if="showSkeleton" cards offer-cards />
     <OffersGrid
       v-else
       :items="visibleOffers"
@@ -87,6 +87,7 @@
 </template>
 
 <script setup>
+import ResultsSkeleton from './ResultsSkeleton.vue';
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import { ArrowsRightLeftIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import OfferComparisonDialog from './offers/OfferComparisonDialog.vue';
@@ -109,7 +110,7 @@ const hasFilters = computed(() =>
   Object.keys(defaultFilters).some((key) => filters.value[key] !== defaultFilters[key]),
 );
 
-const { items: offers, totalItems, currentPage, itemsPerPage, isLoading, error, load } = usePaginatedList((params) => listProducts({
+const { items: offers, totalItems, currentPage, itemsPerPage, isLoading, showSkeleton, error, load } = usePaginatedList((params) => listProducts({
   ...params,
   ...filters.value,
   search: searchTerm.value,
@@ -126,7 +127,7 @@ const addingProductId = ref(null);
 const cartStore = useCartStore();
 const toast = useToast();
 
-watch(() => cartStore.purchaseRevision, () => load());
+watch(() => cartStore.purchaseRevision, () => load(currentPage.value, { keepResults: true }));
 
 const cartQuantitiesByProduct = computed(() => {
   const quantities = {};
